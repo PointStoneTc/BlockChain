@@ -6,7 +6,7 @@
 	<groupId>com.magicgreek.blockchain</groupId>
 	<artifactId>BlockChain</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>BlockChain</name>
 	<description>日本区块链传媒数据服务</description>
