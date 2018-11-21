@@ -1,0 +1,38 @@
+${AnsiColor.BRIGHT_RED}
+                                                               v   c                                                              
+                                                           YY     mIlr                                                          
+                                                       mjQ         Gjjg                                                       
+                                                     Mgr             wjjQ                                                    
+                                                    BjW                CjjjB                                                   
+                                                  mjjjr                   Mjjr                                                  
+                                                  XjjjK                    EjjjK                                                 
+                                                  XjjW                   hjjjB                                                  
+                          mjjjjjjjjjjjjjjjjjM     mjjjM                kjjjQ      CijjjjjjjjjjjjjjjjjjBr                         
+                          jjjjjjjjN     mfBL    rBjjjQ            mjjjjg     UjjBSrrrmjjjjjjjjjr                        
+                        mjjjjE                      ujjjjjjjV      MjjjjjK                       BjjjjB                       
+            wijjjjBr  mjjjjz                          rljjjjjjjjjjjjjjjjjjjll                           OjjM  mBWr           
+          IjjjjjjGr     njjjjr                           DjjjjjjjjjjjjjjjjjG                           Njja     mgjjjjjr        
+        Lijjjjr           Ijjjo                     wjjjjjjjjjjjjjNBjjjjjjjjjjjjg                      WE           mjEr       
+         Mo           WjD                 wjjjjjjjjjjN         Cijjjjjjjjjjjm                PW             wjr        
+            s             wjjj               cljjjjjjjjW                 fijjjjjjjjjM             Mf               cr         
+             mKlPr      mjjr           kjjjjjjjjjj                        kjjjjjjjjW         miT        mEyr            
+     aBjjjjjjjjWr            Zg        tijjjjjjjjjr                           BjjjjjjjQ      mrr            mijjjjjjjjWr    
+cBjjjjjjNr                       r     mjjjjjjjj              jjr              Fjjjjjjjjjn     r                       cjjjjjjjBF
+jjjjjjjjjT                                mjjjjjjjb            Ujr               Gjjjjjjjjw                               wjjjjjj
+ yijjjW                                Njjjjjgr            Bjbr              WjjjjjjQ                              mjjjjjjj
+   IjjjjjKr                              NjjjjN            wjjjm            mjjjjjjjjQ                             mjjjM 
+     BjjjjB                             Njjjjjjir            kjjjjjr            cjjjjjjjjW                            FijjjjN   
+       wjjjjjQ                         cljjjjjjjK            yjjjjjjj          KjjjjjjjjjQ                         Ojjjjjjar     
+    mT  mjjjjjM                      NjjjjM            Fjjjjjjjjr    zijjjjjjjjjjW                      njjjjjjjjjs   w    
+  Ujjj         mjjjjjjgc                wjjjjjjjjj             GjjjjjjjjjjjjjjjjjjjjjjjK                   CjjjjjjjjjE        GjjJ  
+ mjjE               mKiBiKFrr        Pjjjjjjjic             JIjjjjjjjjjjjjjjjM                 cLMT               PjjgM
+   bjjjW                                    mjjjjjgr               SiijjjW      miijjjjjjjjjjjjjBP                   Ijjjjjj  
+      hijjB     wijjjjjjjWr                   wjjjjW                     mjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjBr      yjjjjO    
+            mijjjjjjNr                            UjjjW             hBBEJ                      mijjjjjjjjjjjM            
+          bjjjjjjKr                                    Yjjjjy      mBn                                   mjjjjjjjjjQ         
+        yijjjjjjjjj                                          mgr  cr                                           Ujjjjjjjjjjr       
+          ujjjjjjjjjM                                                                                        wijjjjjjjjjg          
+             mjjjjjjjjjjjByr                        cJDFrr        mWhrr                     mBjjjjjjjjjjjgr            
+                    mBjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjBKc                     mEiBjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjBhr                   
+
+${AnsiColor.BRIGHT_MAGENTA}区块链传媒网站数据服务 ::: Project (version:${application.version}) :::              Spring-Boot ${spring-boot.version}
