@@ -194,7 +194,7 @@
 	<logger name="org.springframework" level="WARN" />
 
 	<!-- 项目 mapper 路径 console控制台显示sql语句：STDOUT.filter.level -> debug级别 -->
-	<logger name="com.chainage.data.dao" level="DEBUG" />
+	<logger name="com.chain" level="DEBUG" />
 	<logger name="jdbc.sqltiming" level="DEBUG" />
 	<logger name="com.ibatis" level="DEBUG" />
 	<logger name="java.sql" level="DEBUG" />

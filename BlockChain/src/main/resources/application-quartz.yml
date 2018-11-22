@@ -1,0 +1,27 @@
+#============计划任务============
+spring:  
+  quartz:  #相关属性配置
+    properties: 
+      org:
+        quartz:
+          scheduler: 
+            instanceName: clusteredScheduler  # 线程调度器实例名
+            instanceId: AUTO  #ID设置为自动获取 每一个必须不同 （所有调度器实例中是唯一的）
+            makeSchedulerThreadDaemon: true  #指定调度程序的主线程是否应该是守护线程
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX  #数据保存方式为持久化
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate  #StdJDBCDelegate说明支持集群
+            tablePrefix: QRTZ_  #quartz内部表的前缀
+            isClustered: true  #是否加入集群
+            clusterCheckinInterval: 10000  #调度实例失效的检查时间间隔
+            useProperties: false
+            misfireThreshold: 25000  #容许的最大作业延长时间
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool  #ThreadPool实现的类名
+            threadCount: 10  #线程数量,即最多10个任务同时跑
+            threadPriority: 5   #线程优先级
+            makeThreadsDaemons: true  #ThreadPool配置线程守护进程
+            threadsInheritContextClassLoaderOfInitializingThread: true 
+    job-store-type: jdbc  #数据库方式
+    jdbc:  #初始化表结构
+      initialize-schema: never

@@ -43,7 +43,6 @@ public class HomeServiceImpl implements HomeServiceI {
     @Autowired
     private HttpUtil httpUtil;
 
-    // @SuppressWarnings("rawtypes")
     @Override
     public boolean home() throws Exception {
         HomeView homeView = new HomeView();
@@ -173,6 +172,7 @@ public class HomeServiceImpl implements HomeServiceI {
 
 
     /**
+     * 组装分类信息
      * 
      * @param categoryIdsMap
      * @return
@@ -205,12 +205,14 @@ public class HomeServiceImpl implements HomeServiceI {
     }
 
     /**
+     * 组装用户信息
      * 
      * @param userIdsMap
      * @return
      * @throws Exception
      */
     private Map<Integer, User> transUser(Map<Integer, Integer> userIdsMap) throws Exception {
+        String[] avatar_urls = new String[] {"24", "48", "96"};
         StringBuffer userUrl = new StringBuffer(homeViewConfigProperties.getUserUrl()).append(Question).append("per_page").append(EQUAL).append(userIdsMap.size()).append(AND)
                 .append("include").append(EQUAL);
         Map<Integer, User> map = new HashMap<Integer, User>();
@@ -228,12 +230,15 @@ public class HomeServiceImpl implements HomeServiceI {
             user.setId(id);
             user.setName(obj.getString("name"));
             user.setDescription(obj.getString("description"));
+            for (String item : avatar_urls)
+                user.getAvatar_urls().put(new Integer(item), obj.getJSONObject("avatar_urls").getString(item));
             map.put(Integer.valueOf(id), user);
         }
         return map;
     }
 
     /**
+     * 组装标签信息
      * 
      * @param tagIdsMap
      * @return
@@ -265,6 +270,7 @@ public class HomeServiceImpl implements HomeServiceI {
     }
 
     /**
+     * 组装媒体信息
      * 
      * @param postList
      * @return
