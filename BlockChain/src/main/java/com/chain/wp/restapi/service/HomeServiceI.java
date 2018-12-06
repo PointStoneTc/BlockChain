@@ -9,4 +9,19 @@ public interface HomeServiceI {
      */
     public boolean home() throws Exception;
 
+    /**
+     * 金融通文章内容封装
+     * 
+     * @return
+     * @throws Exception
+     */
+    public boolean financeDepart() throws Exception;
+
+    /**
+     * 文章右侧热门文章封装
+     * 
+     * @return
+     * @throws Exception
+     */
+    public boolean rightPopular() throws Exception;
 }

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.chain.redis.service.IRedisService;
 import com.chain.util.HttpUtil;
+import com.chain.wp.restapi.config.FinanceDepartViewConfigProperties;
 import com.chain.wp.restapi.config.HomeViewConfigProperties;
+import com.chain.wp.restapi.config.RightPopularViewConfigProperties;
 import com.chain.wp.restapi.entity.Category;
 import com.chain.wp.restapi.entity.Media;
 import com.chain.wp.restapi.entity.MediaDetail;
@@ -21,7 +23,9 @@ import com.chain.wp.restapi.entity.Post;
 import com.chain.wp.restapi.entity.Tag;
 import com.chain.wp.restapi.entity.User;
 import com.chain.wp.restapi.service.HomeServiceI;
+import com.chain.wp.restapi.view.FinanceDepartView;
 import com.chain.wp.restapi.view.HomeView;
+import com.chain.wp.restapi.view.RightPopularView;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -33,9 +37,16 @@ public class HomeServiceImpl implements HomeServiceI {
     final static String Question = "?";
     final static String AND = "&";
     final static String EQUAL = "=";
+    final static String DIAGONAL = "/";
 
     @Autowired
     private HomeViewConfigProperties homeViewConfigProperties;
+
+    @Autowired
+    private FinanceDepartViewConfigProperties financeDepartViewConfigProperties;
+
+    @Autowired
+    private RightPopularViewConfigProperties rightPopularViewConfigProperties;
 
     @Autowired
     private IRedisService redisService;
@@ -65,21 +76,23 @@ public class HomeServiceImpl implements HomeServiceI {
                         continue;
                     url.append(entry.getKey()).append(EQUAL).append(entry.getValue()).append(AND);
                 }
+
                 cutStringBuffer(url, AND); // 去掉最后一个'&'符号
                 JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
+                System.out.println(url.toString());
                 for (int i = 0; i < arrayJson.size(); i++) {
                     JSONObject obj = arrayJson.getJSONObject(i);
                     Post post = new Post();
                     post.setId(obj.getInt("id"));
                     post.setDate(obj.getString("date"));
                     post.setStatus(obj.getString("status"));
-                    post.setTitle(obj.getString("title"));
+                    post.setTitle(obj.getJSONObject("title").getString("rendered"));
                     post.setContent(obj.getJSONObject("content").getString("rendered"));
                     post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
                     post.setComment_status(obj.getString("comment_status"));
                     post.setPing_status(obj.getString("status"));
                     post.setSticky(obj.getBoolean("sticky"));
-                    post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
+                    post.setJetpack_featured_media_url("");
 
                     JSONArray metaArray = obj.getJSONObject("metadata").getJSONArray("_vc_post_settings");
                     if (metaArray != null && metaArray.size() > 0)
@@ -110,7 +123,7 @@ public class HomeServiceImpl implements HomeServiceI {
             }
         } catch (Exception e) {
             logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
-            return false;
+            throw new Exception(e);
         }
 
         // 2.获取所有Category信息
@@ -121,7 +134,7 @@ public class HomeServiceImpl implements HomeServiceI {
                 homeView.getCaterories().add(categoryMap.get(key));
         } catch (Exception e) {
             logger.error("请求wordpress-category服务错误:" + categoryIdsMap_temp, e);
-            return false;
+            throw new Exception(e);
         }
 
         // 3.获取所有tag信息
@@ -132,7 +145,7 @@ public class HomeServiceImpl implements HomeServiceI {
                 homeView.getTags().add(tagMap.get(key));
         } catch (Exception e) {
             logger.error("请求wordpress-tag服务错误:" + tagIdsMap_temp, e);
-            return false;
+            throw new Exception(e);
         }
 
         // 4.获取所有user信息
@@ -143,7 +156,7 @@ public class HomeServiceImpl implements HomeServiceI {
                 homeView.getUsers().add(userMap.get(key));
         } catch (Exception e) {
             logger.error("请求wordpress-user服务错误:" + userIdsMap_temp, e);
-            return false;
+            throw new Exception(e);
         }
 
         // 5.获取所有的media信息
@@ -318,6 +331,84 @@ public class HomeServiceImpl implements HomeServiceI {
             map.put(Integer.valueOf(obj.getInt("post")), media);
         }
         return map;
+    }
+
+    @Override
+    public boolean financeDepart() throws Exception {
+        int postId = financeDepartViewConfigProperties.getId();
+        FinanceDepartView financeDepartView = new FinanceDepartView();
+        financeDepartView.setId(postId);
+        try {
+            StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
+            JSONObject obj = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
+            String content = obj.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>", "");
+
+            for (String item : content.split("\n")) {
+                String[] cx = item.split("/-/");
+                financeDepartView.add(cx[0], cx[1], cx[2]);
+            }
+
+        } catch (
+
+        Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
+            throw new Exception(e);
+        }
+
+        redisService.set("chain_financeDepartView", financeDepartView);
+        return true;
+    }
+
+    @Override
+    public boolean rightPopular() throws Exception {
+        int postId = rightPopularViewConfigProperties.getId();
+        RightPopularView rightPopularView = new RightPopularView();
+        rightPopularView.setId(postId);
+        try {
+            StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
+            JSONObject popularPost = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
+            String content = popularPost.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>", "");
+
+            url.setLength(0);
+            url.append(homeViewConfigProperties.getPostUrl()).append(Question).append("include").append(EQUAL);
+            for (String item : content.split("\n"))
+                url.append(item.split(EQUAL)[0]).append(COMMA);
+            cutStringBuffer(url, COMMA); // 去掉最后一个','符号
+
+            JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
+            for (int i = 0; i < arrayJson.size(); i++) {
+                JSONObject obj = arrayJson.getJSONObject(i);
+                Post post = new Post();
+                post.setId(obj.getInt("id"));
+                post.setDate(obj.getString("date"));
+                post.setStatus(obj.getString("status"));
+                post.setTitle(obj.getJSONObject("title").getString("rendered"));
+                post.setContent(obj.getJSONObject("content").getString("rendered"));
+                post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
+                post.setComment_status(obj.getString("comment_status"));
+                post.setPing_status(obj.getString("status"));
+                post.setSticky(obj.getBoolean("sticky"));
+                post.setJetpack_featured_media_url("");
+
+                JSONArray metaArray = obj.getJSONObject("metadata").getJSONArray("_vc_post_settings");
+                if (metaArray != null && metaArray.size() > 0)
+                    post.setIndex(metaArray.getString(0));
+
+                rightPopularView.getList().add(post);
+            }
+
+            Map<Integer, Media> mediaMap = transMedia(rightPopularView.getList());
+
+            for (Post post : rightPopularView.getList())
+                post.setFeaturedmedia(mediaMap.get(post.getId()));
+        } catch (Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
+            throw new Exception(e);
+        }
+
+        redisService.set("chain_rightPopularView", rightPopularView);
+        return true;
+
     }
 
     /**

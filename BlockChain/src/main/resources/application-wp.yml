@@ -3,33 +3,61 @@ wordpress:
   post:
     home:
       desc: 首页所有内容封装
-      postUrl: https://www.chainage.jp/wp-json/wp/v2/posts
-      tagUrl: https://www.chainage.jp/wp-json/wp/v2/tags
-      userUrl: https://www.chainage.jp/wp-json/wp/v2/users
-      categoryUrl: https://www.chainage.jp/wp-json/wp/v2/categories
-      mediaUrl: https://www.chainage.jp/wp-json/wp/v2/media
+      postUrl: http://chainage.cc/wp-json/wp/v2/posts
+      tagUrl: http://chainage.cc/wp-json/wp/v2/tags
+      userUrl: http://chainage.cc/wp-json/wp/v2/users
+      categoryUrl: http://chainage.cc/wp-json/wp/v2/categories
+      mediaUrl: http://chainage.cc/wp-json/wp/v2/media
       listmap:
-        - categories: 100
+        - categories: 180
           per_page: 3
           order: desc
           orderby: date
           status: publish
           active: true
-        - categories: 103
-          per_page: 6
-          order: desc
-          orderby: date
-          status: publish
-          active: true
-        - categories: 148
-          per_page: 6
+        - categories: 181
+          per_page: 3
           order: desc
           orderby: date
           status: publish
           active: true
         - categories: 99
-          per_page: 10
+          per_page: 6
           order: desc
           orderby: date
           status: publish
           active: true
+        - categories: 186
+          per_page: 1
+          order: desc
+          orderby: date
+          status: publish
+          active: true
+        - categories: 184
+          per_page: 6
+          order: desc
+          orderby: date
+          status: publish
+          active: true
+        - categories: 185
+          per_page: 6
+          order: desc
+          orderby: date
+          status: publish
+          active: true
+        - categories: 187
+          per_page: 1
+          order: desc
+          orderby: date
+          status: publish
+          active: true
+        - categories: 185
+          per_page: 6
+          order: desc
+          orderby: date
+          status: publish
+          active: true
+    finance: 
+      id: 6137
+    rightpopular:
+      id: 6180

@@ -84,6 +84,8 @@ public class HttpUtil {
             if (statusCode == HttpStatus.SC_OK) {
                 ret = readResponseContent(response.getEntity().getContent());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (response != null) {
                 try {

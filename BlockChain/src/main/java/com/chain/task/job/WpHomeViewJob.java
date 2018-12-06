@@ -18,8 +18,15 @@ public class WpHomeViewJob implements BaseJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             homeService.home();
+            logger.info("组装wordpress前台首页成功!");
+
+            homeService.financeDepart();
+            logger.info("组装financeDepart页成功!");
+
+            homeService.rightPopular();
+            logger.info("组装rightPopular页成功!");
         } catch (Exception e) {
-            logger.error("组装wordpress前台首页出错,清联系管理员!", e);
+            logger.error("组装前台首页出错,清联系管理员!", e);
         }
     }
 }

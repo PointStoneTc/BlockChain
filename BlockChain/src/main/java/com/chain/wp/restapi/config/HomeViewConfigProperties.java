@@ -73,6 +73,4 @@ public class HomeViewConfigProperties {
     public void setListmap(List<Map<String, String>> listmap) {
         this.listmap = listmap;
     }
-
-
 }
