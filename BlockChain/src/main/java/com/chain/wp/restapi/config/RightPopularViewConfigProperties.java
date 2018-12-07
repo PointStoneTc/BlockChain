@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "wordpress.post.rightpopular")
 public class RightPopularViewConfigProperties {
     private int id;
+    private String thumbnail;
+    private String desc;
 
     public int getId() {
         return id;
@@ -14,5 +16,21 @@ public class RightPopularViewConfigProperties {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

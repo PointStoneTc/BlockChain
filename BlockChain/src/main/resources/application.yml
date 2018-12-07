@@ -18,9 +18,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     name: chainage
-    url: jdbc:mysql://192.168.1.200:3306/chainage?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 12ab!@
+    url: jdbc:mysql://35.200.99.89:3306/Chainage_cc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: Chainage_cc
+    password: YiCz3jEw4A4jZ5e4
     driver-class-name: com.mysql.jdbc.Driver
     # 下面为连接池的补充设置，应用到上面所有数据源中
     initialSize: 1 # 初始化大小

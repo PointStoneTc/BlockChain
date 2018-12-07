@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chain.redis.service.IRedisService;
+import com.chain.wp.restapi.service.HomeServiceI;
 import com.chain.wp.restapi.view.FinanceDepartView;
 import com.chain.wp.restapi.view.HomeView;
 import com.chain.wp.restapi.view.RightPopularView;

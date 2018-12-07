@@ -19,6 +19,15 @@ public class MediaDetail implements Serializable {
 
     public MediaDetail() {}
 
+    public MediaDetail(String name, String file, int width, int height, String mime_type, String source_url) {
+        this.name = name;
+        this.file = file;
+        this.width = width;
+        this.height = height;
+        this.mime_type = mime_type;
+        this.source_url = source_url;
+    }
+
     public String getName() {
         return name;
     }
@@ -65,5 +74,11 @@ public class MediaDetail implements Serializable {
 
     public void setSource_url(String source_url) {
         this.source_url = source_url;
+    }
+
+    public Double getCompareValue() {
+        double w = width;
+        double h = height;
+        return Double.valueOf(w / h);
     }
 }

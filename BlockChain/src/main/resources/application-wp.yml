@@ -14,50 +14,60 @@ wordpress:
           order: desc
           orderby: date
           status: publish
+          thumbnail: 700,400
+          desc: 首页上⽅轮播
           active: true
         - categories: 181
           per_page: 3
           order: desc
           orderby: date
           status: publish
+          thumbnail: 300,150
+          desc: 轮播图下⼴告栏
           active: true
         - categories: 99
           per_page: 6
           order: desc
           orderby: date
           status: publish
+          thumbnail: 300,150
+          desc: 首页新闻模块
           active: true
         - categories: 186
           per_page: 1
           order: desc
           orderby: date
           status: publish
+          thumbnail: 1920,400
+          desc: 首页第⼀个⼴告栏
           active: true
         - categories: 184
           per_page: 6
           order: desc
           orderby: date
           status: publish
-          active: true
-        - categories: 185
-          per_page: 6
-          order: desc
-          orderby: date
-          status: publish
+          thumbnail: 300,150
+          desc: 首页特集模块
           active: true
         - categories: 187
           per_page: 1
           order: desc
           orderby: date
           status: publish
+          thumbnail: 1920,400
+          desc: 首页第⼆个⼴告栏
           active: true
         - categories: 185
           per_page: 6
           order: desc
           orderby: date
           status: publish
-          active: true
+          thumbnail: 300,150
+          desc: 首页chaiange channel
     finance: 
       id: 6137
+      desc: 财政厅文章模块
     rightpopular:
       id: 6180
+      thumbnail: 300,150
+      desc: 新闻内容页右侧热点文章模块

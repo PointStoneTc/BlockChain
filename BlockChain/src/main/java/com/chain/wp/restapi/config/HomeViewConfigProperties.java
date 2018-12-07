@@ -73,4 +73,14 @@ public class HomeViewConfigProperties {
     public void setListmap(List<Map<String, String>> listmap) {
         this.listmap = listmap;
     }
+
+    public String getSelfThumbnail(Integer id) {
+        for (Map<String, String> map : listmap) {
+            if (map.get("categories").equals(id.toString())) {
+                return map.get("thumbnail");
+            }
+        }
+
+        return null;
+    }
 }

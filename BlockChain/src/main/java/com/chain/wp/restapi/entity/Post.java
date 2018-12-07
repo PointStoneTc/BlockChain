@@ -26,7 +26,7 @@ public class Post implements Serializable {
     private User author;
     private List<Category> categories;
     private List<Tag> tags;
-    private Media featuredmedia;
+    private Media featuredMedia;
 
     private String index; // 用户轮播这类的位置定位
     private Integer loaction; // 页面的定位
@@ -34,10 +34,13 @@ public class Post implements Serializable {
     private Integer[] categoryIds; // 自身所有的分类id
     private Integer[] tagIds; // 自身所有的标签id
 
+    // 附加属性
+    private MediaDetail thumbnailMediaDetail; // 默认的缩略图
+
     public Post() {
         categories = new ArrayList<Category>();
         tags = new ArrayList<Tag>();
-        featuredmedia = new Media();
+        featuredMedia = new Media();
     }
 
     public int getId() {
@@ -144,12 +147,12 @@ public class Post implements Serializable {
         this.tags = tags;
     }
 
-    public Media getFeaturedmedia() {
-        return featuredmedia;
+    public Media getFeaturedMedia() {
+        return featuredMedia;
     }
 
-    public void setFeaturedmedia(Media featuredmedia) {
-        this.featuredmedia = featuredmedia;
+    public void setFeaturedMedia(Media featuredMedia) {
+        this.featuredMedia = featuredMedia;
     }
 
     public String getIndex() {
@@ -192,5 +195,12 @@ public class Post implements Serializable {
         this.tagIds = tagIds;
     }
 
+    public MediaDetail getThumbnailMediaDetail() {
+        return thumbnailMediaDetail;
+    }
+
+    public void setThumbnailMediaDetail(MediaDetail thumbnailMediaDetail) {
+        this.thumbnailMediaDetail = thumbnailMediaDetail;
+    }
 
 }

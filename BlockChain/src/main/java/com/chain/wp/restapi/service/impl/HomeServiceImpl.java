@@ -1,5 +1,6 @@
 package com.chain.wp.restapi.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,7 +73,7 @@ public class HomeServiceImpl implements HomeServiceI {
                 Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> entry = entries.next();
-                    if ("active".equals(entry.getKey()))
+                    if ("active".equals(entry.getKey()) || "thumbnail".equals(entry.getKey()) || "desc".equals(entry.getKey()))
                         continue;
                     url.append(entry.getKey()).append(EQUAL).append(entry.getValue()).append(AND);
                 }
@@ -171,12 +172,13 @@ public class HomeServiceImpl implements HomeServiceI {
             for (Integer key : post.getTagIds())
                 post.getTags().add(tagMap.get(key));
 
-            post.setFeaturedmedia(mediaMap.get(post.getId()));
+            post.setFeaturedMedia(mediaMap.get(post.getId()));
 
             Integer location = post.getLoaction();
             if (!homeView.getPostMap().containsKey(location))
                 homeView.getPostMap().put(location, new ArrayList<Post>());
             homeView.getPostMap().get(location).add(post);
+            post.setThumbnailMediaDetail(getPostFeaturedmedia(homeViewConfigProperties.getSelfThumbnail(location), post.getFeaturedMedia()));
         }
 
         redisService.set("chain_homeView", homeView);
@@ -280,6 +282,55 @@ public class HomeServiceImpl implements HomeServiceI {
             map.put(Integer.valueOf(id), tag);
         }
         return map;
+    }
+
+    private MediaDetail getPostFeaturedmedia(String thumbnail, Media media) {
+        if (thumbnail == null || "".equals(thumbnail) || media == null)
+            return null;
+
+        double w = Double.parseDouble(thumbnail.split(COMMA)[0].trim());
+        double h = Double.parseDouble(thumbnail.split(COMMA)[1].trim());
+        double scale = new BigDecimal(w / h).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        media.getMedia_details().sort((MediaDetail d1, MediaDetail d2) -> d1.getCompareValue().compareTo(d2.getCompareValue()));
+
+        MediaDetail minDetail = media.getMedia_details().get(0);
+        if (scale <= new BigDecimal(minDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+            return minDetail;
+
+        MediaDetail maxDetail = media.getMedia_details().get(media.getMedia_details().size() - 1);
+        if (scale >= new BigDecimal(maxDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+            return maxDetail;
+
+        int middleIndex = (media.getMedia_details().size() - 1) / 2;
+        MediaDetail middleDetail = media.getMedia_details().get(middleIndex);
+        double middle_scale = new BigDecimal(middleDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        // System.out.println(thumbnail);
+        // for (MediaDetail d : media.getMedia_details())
+        // System.out.println(d.getName() + ":" + d.getWidth() + "*" + d.getHeight() + " | " +
+        // Double.valueOf(d.getWidth()) / Double.valueOf(d.getHeight()) + " | "
+        // + (d.getCompareValue() - scale));
+
+        for (int i = middle_scale - scale >= 0 ? 0 : middleIndex; i < media.getMedia_details().size() - middleIndex; i++) {
+            MediaDetail currentMedia = media.getMedia_details().get(i);
+            double curr = new BigDecimal(currentMedia.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            if (curr - scale >= 0) {
+                if (i == media.getMedia_details().size() - 1) {// 遍历到最后一个
+                    return new MediaDetail();
+                }
+
+                MediaDetail nextMedia = media.getMedia_details().get(i + 1);
+                double next = new BigDecimal(nextMedia.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+                if (Math.abs(next - scale) > Math.abs(curr - scale))
+                    new MediaDetail(currentMedia.getName(), currentMedia.getFile(), currentMedia.getWidth(), currentMedia.getHeight(), currentMedia.getMime_type(),
+                            currentMedia.getSource_url());
+                else
+                    new MediaDetail(nextMedia.getName(), nextMedia.getFile(), nextMedia.getWidth(), nextMedia.getHeight(), nextMedia.getMime_type(), nextMedia.getSource_url());
+            }
+
+        }
+        return null;
     }
 
     /**
@@ -399,8 +450,9 @@ public class HomeServiceImpl implements HomeServiceI {
 
             Map<Integer, Media> mediaMap = transMedia(rightPopularView.getList());
 
-            for (Post post : rightPopularView.getList())
-                post.setFeaturedmedia(mediaMap.get(post.getId()));
+            for (Post post : rightPopularView.getList()) {
+                post.setFeaturedMedia(mediaMap.get(post.getId()));
+            }
         } catch (Exception e) {
             logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
             throw new Exception(e);
