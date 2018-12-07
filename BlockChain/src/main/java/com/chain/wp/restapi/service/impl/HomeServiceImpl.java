@@ -291,19 +291,19 @@ public class HomeServiceImpl implements HomeServiceI {
         double w = Double.parseDouble(thumbnail.split(COMMA)[0].trim());
         double h = Double.parseDouble(thumbnail.split(COMMA)[1].trim());
         double scale = new BigDecimal(w / h).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        media.getMedia_details().sort((MediaDetail d1, MediaDetail d2) -> d1.getCompareValue().compareTo(d2.getCompareValue()));
+        media.getMedia_details().sort((MediaDetail d1, MediaDetail d2) -> mediaCompare(d1).compareTo(mediaCompare(d2)));
 
         MediaDetail minDetail = media.getMedia_details().get(0);
-        if (scale <= new BigDecimal(minDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+        if (scale <= new BigDecimal(mediaCompare(minDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
             return minDetail;
 
         MediaDetail maxDetail = media.getMedia_details().get(media.getMedia_details().size() - 1);
-        if (scale >= new BigDecimal(maxDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+        if (scale >= new BigDecimal(mediaCompare(maxDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
             return maxDetail;
 
         int middleIndex = (media.getMedia_details().size() - 1) / 2;
         MediaDetail middleDetail = media.getMedia_details().get(middleIndex);
-        double middle_scale = new BigDecimal(middleDetail.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double middle_scale = new BigDecimal(mediaCompare(middleDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         // System.out.println(thumbnail);
         // for (MediaDetail d : media.getMedia_details())
@@ -313,22 +313,16 @@ public class HomeServiceImpl implements HomeServiceI {
 
         for (int i = middle_scale - scale >= 0 ? 0 : middleIndex; i < media.getMedia_details().size() - middleIndex; i++) {
             MediaDetail currentMedia = media.getMedia_details().get(i);
-            double curr = new BigDecimal(currentMedia.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            double curr = new BigDecimal(mediaCompare(currentMedia).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             if (curr - scale >= 0) {
                 if (i == media.getMedia_details().size() - 1) {// 遍历到最后一个
                     return new MediaDetail();
                 }
 
                 MediaDetail nextMedia = media.getMedia_details().get(i + 1);
-                double next = new BigDecimal(nextMedia.getCompareValue().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
-                if (Math.abs(next - scale) > Math.abs(curr - scale))
-                    new MediaDetail(currentMedia.getName(), currentMedia.getFile(), currentMedia.getWidth(), currentMedia.getHeight(), currentMedia.getMime_type(),
-                            currentMedia.getSource_url());
-                else
-                    new MediaDetail(nextMedia.getName(), nextMedia.getFile(), nextMedia.getWidth(), nextMedia.getHeight(), nextMedia.getMime_type(), nextMedia.getSource_url());
+                double next = new BigDecimal(mediaCompare(nextMedia).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                return Math.abs(next - scale) > Math.abs(curr - scale) ? currentMedia : nextMedia;
             }
-
         }
         return null;
     }
@@ -399,9 +393,7 @@ public class HomeServiceImpl implements HomeServiceI {
                 financeDepartView.add(cx[0], cx[1], cx[2]);
             }
 
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
             throw new Exception(e);
         }
@@ -472,5 +464,16 @@ public class HomeServiceImpl implements HomeServiceI {
         int index = sb.lastIndexOf(c);
         if (index == sb.length() - 1)
             sb.deleteCharAt(index);
+    }
+
+    /**
+     * 
+     * @param m
+     * @return
+     */
+    private Double mediaCompare(MediaDetail m) {
+        double w = m.getWidth();
+        double h = m.getHeight();
+        return Double.valueOf(w / h);
     }
 }

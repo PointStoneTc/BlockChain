@@ -75,10 +75,4 @@ public class MediaDetail implements Serializable {
     public void setSource_url(String source_url) {
         this.source_url = source_url;
     }
-
-    public Double getCompareValue() {
-        double w = width;
-        double h = height;
-        return Double.valueOf(w / h);
-    }
 }
