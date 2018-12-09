@@ -15,7 +15,7 @@ wordpress:
           orderby: date
           status: publish
           thumbnail: 700,400
-          desc: 首页上⽅轮播
+          desc: 首页上方轮播
           active: true
         - categories: 181
           per_page: 3
@@ -23,7 +23,7 @@ wordpress:
           orderby: date
           status: publish
           thumbnail: 300,150
-          desc: 轮播图下⼴告栏
+          desc: 轮播图下方告栏
           active: true
         - categories: 99
           per_page: 6
@@ -39,7 +39,7 @@ wordpress:
           orderby: date
           status: publish
           thumbnail: 1920,400
-          desc: 首页第⼀个⼴告栏
+          desc: 首页第1个广告栏
           active: true
         - categories: 184
           per_page: 6
@@ -55,7 +55,7 @@ wordpress:
           orderby: date
           status: publish
           thumbnail: 1920,400
-          desc: 首页第⼆个⼴告栏
+          desc: 首页第2个广告栏
           active: true
         - categories: 185
           per_page: 6
@@ -64,10 +64,11 @@ wordpress:
           status: publish
           thumbnail: 300,150
           desc: 首页chaiange channel
+          active: true
     finance: 
       id: 6137
       desc: 财政厅文章模块
     rightpopular:
       id: 6180
-      thumbnail: 300,150
+      thumbnail: 300,300
       desc: 新闻内容页右侧热点文章模块
