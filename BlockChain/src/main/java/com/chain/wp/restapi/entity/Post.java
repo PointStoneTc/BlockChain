@@ -2,6 +2,7 @@ package com.chain.wp.restapi.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -33,6 +34,8 @@ public class Post implements Serializable {
     private Integer authorId; // 作者id
     private Integer[] categoryIds; // 自身所有的分类id
     private Integer[] tagIds; // 自身所有的标签id
+    private int wp_featuredmedia_id = 0; // 特色图片id
+    private List<LinkedHashMap<String, Object>> metadata; // meta数据
 
     // 附加属性
     private MediaDetail thumbnailMediaDetail; // 默认的缩略图
@@ -41,6 +44,7 @@ public class Post implements Serializable {
         categories = new ArrayList<Category>();
         tags = new ArrayList<Tag>();
         featuredMedia = new Media();
+        metadata = new ArrayList<LinkedHashMap<String, Object>>();
     }
 
     public int getId() {
@@ -193,6 +197,22 @@ public class Post implements Serializable {
 
     public void setTagIds(Integer[] tagIds) {
         this.tagIds = tagIds;
+    }
+
+    public int getWp_featuredmedia_id() {
+        return wp_featuredmedia_id;
+    }
+
+    public void setWp_featuredmedia_id(int wp_featuredmedia_id) {
+        this.wp_featuredmedia_id = wp_featuredmedia_id;
+    }
+
+    public List<LinkedHashMap<String, Object>> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(List<LinkedHashMap<String, Object>> metadata) {
+        this.metadata = metadata;
     }
 
     public MediaDetail getThumbnailMediaDetail() {

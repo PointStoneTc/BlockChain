@@ -69,6 +69,59 @@ wordpress:
       id: 6137
       desc: 财政厅文章模块
     rightpopular:
-      id: 6180
+      id: 6374
       thumbnail: 300,300
       desc: 新闻内容页右侧热点文章模块
+      
+#==================== coin ============================
+coin:
+  job:
+    api-key-name: X-CMC_PRO_API_KEY
+    api-key-value: 36e73e36-c202-4f0e-8f17-0190aa8a0705
+    #setAssetsQuotationRateCurrent_Job()方法所用到的参数
+    assets-quotation-rate-current:
+      url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
+      id_base: BTC,BCH,ETH,ETC,XRP,EOS,MIOTA,XLM,LTC,ADA,XMR,DASH,TRX,NEO,XEM,VET
+      id_quote: JPY
+    #setTopFloatingExchange_Job所用到的参数
+    top-floating-exchange:
+      url: https://pro-api.coinmarketcap.com/v1/exchange/listings/latest
+      sort: volume_24h
+      sort_dir_desc: desc
+      sort_dir_asc: asc
+      market_type: all
+      convert: BTC,JPY
+      limit: 50
+    #setMarkInfoExchange_Job所用到的参数
+    mark-info-exchange-job:
+      url: https://pro-api.coinmarketcap.com/v1/exchange/market-pairs/latest
+      convert: BTC
+      limit: 500
+    #setMarketInfoExchange所用到的参数
+    marketInfoExchange:
+      url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest
+      convert: BTC
+      limit: 501
+    #setBtcMonitorLine_OHLCV所用到的参数
+    btc-monitor-line-OHLCV:
+      line:
+        url: https://pro-api.coinmarketcap.com/v1/tools/price-conversion
+        symbol: BTC
+        convert: JPY,USD,EUR,CNY
+        amount: 1
+      ohlcv:
+        url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/ohlcv/latest
+        symbol: BTC
+        convert: USD
+    #setBtcMonitorRate所用到的参数
+    btcMonitorRate:
+      url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?
+      symbol: BTC
+      convert: AUD,BRL,GBP,CAD,CLP,CNY,CZK,DKK,EUR,HKD,HUF,INR,IDR,ILS,JPY,MYR,MXN,TWD,NZD,NOK,PKR,PHP,PLN,RUB,SGD,ZAR,KRW,SEK,CHF,THB,TRY,USD
+    #setAssetsGeneral_Job所用到的参数
+    assetsGeneral_Job:
+      url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
+      convert: BTC
+      limit: 3000
+      sort: volume_24h
+      sort_dir: desc

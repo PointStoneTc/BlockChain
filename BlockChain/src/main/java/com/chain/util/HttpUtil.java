@@ -69,15 +69,22 @@ public class HttpUtil {
      * get 方法
      * 
      * @param url
+     * @param header
      * @return
      * @throws Exception
      */
-    public String sendGet(String url) throws Exception {
+    public String sendGet(String url, String... header) throws Exception {
         CloseableHttpClient httpClient = connManager.getHttpClient();
         HttpGet request = new HttpGet(url);
         String ret = null;
+        if (header != null && header.length != 0) {
+            for (String h : header) {
+                request.setHeader(h.split(";")[0], h.split(";")[1]);
+            }
+        }
         CloseableHttpResponse response = httpClient.execute(request);
 
+        System.out.println("URL->      " + url);
         try {
             // 获取返回状态
             int statusCode = response.getStatusLine().getStatusCode();

@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,465 +35,489 @@ import net.sf.json.JSONObject;
 
 @Service("homeService")
 public class HomeServiceImpl implements HomeServiceI {
-	private final static Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
-	final static String COMMA = ",";
-	final static String Question = "?";
-	final static String AND = "&";
-	final static String EQUAL = "=";
-	final static String DIAGONAL = "/";
+    private final static Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
+    final static String COMMA = ",";
+    final static String Question = "?";
+    final static String AND = "&";
+    final static String EQUAL = "=";
+    final static String DIAGONAL = "/";
 
-	@Autowired
-	private HomeViewConfigProperties homeViewConfigProperties;
+    @Autowired
+    private HomeViewConfigProperties homeViewConfigProperties;
 
-	@Autowired
-	private FinanceDepartViewConfigProperties financeDepartViewConfigProperties;
+    @Autowired
+    private FinanceDepartViewConfigProperties financeDepartViewConfigProperties;
 
-	@Autowired
-	private RightPopularViewConfigProperties rightPopularViewConfigProperties;
+    @Autowired
+    private RightPopularViewConfigProperties rightPopularViewConfigProperties;
 
-	@Autowired
-	private IRedisService redisService;
+    @Autowired
+    private IRedisService redisService;
 
-	@Autowired
-	private HttpUtil httpUtil;
+    @Autowired
+    private HttpUtil httpUtil;
 
-	@Override
-	public boolean home() throws Exception {
-		HomeView homeView = new HomeView();
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean home() throws Exception {
+        HomeView homeView = new HomeView();
 
-		// 1.获取所有文章
-		Map<Integer, Integer> categoryIdsMap_temp = new HashMap<Integer, Integer>();
-		Map<Integer, Integer> tagIdsMap_temp = new HashMap<Integer, Integer>();
-		Map<Integer, Integer> userIdsMap_temp = new HashMap<Integer, Integer>();
-		List<Post> postList = new ArrayList<Post>();
+        // 1.获取所有文章
+        Map<Integer, Integer> categoryIdsMap_temp = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> tagIdsMap_temp = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> userIdsMap_temp = new HashMap<Integer, Integer>();
+        List<Post> postList = new ArrayList<Post>();
 
-		try {
-			for (Map<String, String> map : homeViewConfigProperties.getListmap()) {
-				if ("false".equals(map.get("active"))) // 只有活动的模块才能加载
-					continue;
-				StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(Question);
-				Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
-				while (entries.hasNext()) {
-					Map.Entry<String, String> entry = entries.next();
-					if ("active".equals(entry.getKey()) || "thumbnail".equals(entry.getKey())
-							|| "desc".equals(entry.getKey()))
-						continue;
-					url.append(entry.getKey()).append(EQUAL).append(entry.getValue()).append(AND);
-				}
+        try {
+            for (Map<String, String> map : homeViewConfigProperties.getListmap()) {
+                if ("false".equals(map.get("active"))) // 只有活动的模块才能加载
+                    continue;
+                StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(Question);
+                Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
+                while (entries.hasNext()) {
+                    Map.Entry<String, String> entry = entries.next();
+                    if ("active".equals(entry.getKey()) || "thumbnail".equals(entry.getKey()) || "desc".equals(entry.getKey()))
+                        continue;
+                    url.append(entry.getKey()).append(EQUAL).append(entry.getValue()).append(AND);
+                }
 
-				cutStringBuffer(url, AND); // 去掉最后一个'&'符号
-				JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
-				System.out.println(url.toString());
-				for (int i = 0; i < arrayJson.size(); i++) {
-					JSONObject obj = arrayJson.getJSONObject(i);
-					Post post = new Post();
-					post.setId(obj.getInt("id"));
-					post.setDate(obj.getString("date"));
-					post.setStatus(obj.getString("status"));
-					post.setTitle(obj.getJSONObject("title").getString("rendered"));
-					post.setContent(obj.getJSONObject("content").getString("rendered"));
-					post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
-					post.setComment_status(obj.getString("comment_status"));
-					post.setPing_status(obj.getString("status"));
-					post.setSticky(obj.getBoolean("sticky"));
-					post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
+                cutStringBuffer(url, AND); // 去掉最后一个'&'符号
+                JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
+                for (int i = 0; i < arrayJson.size(); i++) {
+                    JSONObject obj = arrayJson.getJSONObject(i);
+                    Post post = new Post();
+                    post.setId(obj.getInt("id"));
+                    post.setDate(obj.getString("date"));
+                    post.setStatus(obj.getString("status"));
+                    post.setTitle(obj.getJSONObject("title").getString("rendered"));
+                    post.setContent(obj.getJSONObject("content").getString("rendered"));
+                    post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
+                    post.setComment_status(obj.getString("comment_status"));
+                    post.setPing_status(obj.getString("status"));
+                    post.setSticky(obj.getBoolean("sticky"));
+                    post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
 
-					JSONArray metaArray = obj.getJSONObject("metadata").getJSONArray("_vc_post_settings");
-					if (metaArray != null && metaArray.size() > 0)
-						post.setIndex(metaArray.getString(0));
+                    JSONObject metaArray = obj.getJSONObject("metadata");
+                    for (Object key : metaArray.keySet()) {
+                        if (metaArray.has("sort_id")) {
+                            post.setIndex(String.valueOf(metaArray.getJSONArray("sort_id").get(0)));
+                        }
+                        LinkedHashMap<String, Object> linkmap = new LinkedHashMap<String, Object>();
+                        linkmap.put(key.toString(), metaArray.get(key));
+                        post.getMetadata().add(linkmap);
+                    }
 
-					post.setAuthorId(Integer.valueOf(obj.getInt("author")));
-					userIdsMap_temp.put(post.getAuthorId(), post.getAuthorId()); // 存储所有的userId
+                    Object featured_media = obj.get("featured_media");
+                    if (featured_media != null && !"".equals(featured_media.toString())) {
+                        post.setWp_featuredmedia_id(Integer.parseInt(featured_media.toString()));
+                    }
 
-					JSONArray categoryArray = obj.getJSONArray("categories");
-					post.setCategoryIds(new Integer[categoryArray.size()]);
-					for (int x = 0; x < categoryArray.size(); x++) { // 存储所有的categoryId
-						Integer categoriesId = Integer.valueOf(categoryArray.getInt(x));
-						categoryIdsMap_temp.put(categoriesId, categoriesId);
-						post.getCategoryIds()[x] = categoriesId;
-					}
-					post.setLoaction(Integer.parseInt(map.get("categories")));
+                    post.setAuthorId(Integer.valueOf(obj.getInt("author")));
+                    userIdsMap_temp.put(post.getAuthorId(), post.getAuthorId()); // 存储所有的userId
 
-					JSONArray tagsArray = obj.getJSONArray("tags");
-					post.setTagIds(new Integer[tagsArray.size()]);
-					for (int x = 0; x < tagsArray.size(); x++) { // 存储所有的tagId
-						Integer tagId = Integer.valueOf(tagsArray.getInt(x));
-						tagIdsMap_temp.put(tagId, tagId);
-						post.getTagIds()[x] = tagId;
-					}
+                    JSONArray categoryArray = obj.getJSONArray("categories");
+                    post.setCategoryIds(new Integer[categoryArray.size()]);
+                    for (int x = 0; x < categoryArray.size(); x++) { // 存储所有的categoryId
+                        Integer categoriesId = Integer.valueOf(categoryArray.getInt(x));
+                        categoryIdsMap_temp.put(categoriesId, categoriesId);
+                        post.getCategoryIds()[x] = categoriesId;
+                    }
+                    post.setLoaction(Integer.parseInt(map.get("categories")));
 
-					postList.add(post);
-				}
-			}
-		} catch (Exception e) {
-			logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
-			throw new Exception(e);
-		}
+                    JSONArray tagsArray = obj.getJSONArray("tags");
+                    post.setTagIds(new Integer[tagsArray.size()]);
+                    for (int x = 0; x < tagsArray.size(); x++) { // 存储所有的tagId
+                        Integer tagId = Integer.valueOf(tagsArray.getInt(x));
+                        tagIdsMap_temp.put(tagId, tagId);
+                        post.getTagIds()[x] = tagId;
+                    }
 
-		// 2.获取所有Category信息
-		Map<Integer, Category> categoryMap = new HashMap<Integer, Category>();
-		try {
-			categoryMap = transCategory(categoryIdsMap_temp);
-			for (Integer key : categoryMap.keySet())
-				homeView.getCaterories().add(categoryMap.get(key));
-		} catch (Exception e) {
-			logger.error("请求wordpress-category服务错误:" + categoryIdsMap_temp, e);
-			throw new Exception(e);
-		}
+                    postList.add(post);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
+            throw new Exception(e);
+        }
 
-		// 3.获取所有tag信息
-		Map<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
-		try {
-			tagMap = transTag(tagIdsMap_temp);
-			for (Integer key : tagMap.keySet())
-				homeView.getTags().add(tagMap.get(key));
-		} catch (Exception e) {
-			logger.error("请求wordpress-tag服务错误:" + tagIdsMap_temp, e);
-			throw new Exception(e);
-		}
+        // 2.获取所有Category信息
+        Map<Integer, Category> categoryMap = new HashMap<Integer, Category>();
+        try {
+            categoryMap = transCategory(categoryIdsMap_temp);
+            for (Integer key : categoryMap.keySet())
+                homeView.getCaterories().add(categoryMap.get(key));
+        } catch (Exception e) {
+            logger.error("请求wordpress-category服务错误:" + categoryIdsMap_temp, e);
+            throw new Exception(e);
+        }
 
-		// 4.获取所有user信息
-		Map<Integer, User> userMap = new HashMap<Integer, User>();
-		try {
-			userMap = transUser(userIdsMap_temp);
-			for (Integer key : userMap.keySet())
-				homeView.getUsers().add(userMap.get(key));
-		} catch (Exception e) {
-			logger.error("请求wordpress-user服务错误:" + userIdsMap_temp, e);
-			throw new Exception(e);
-		}
+        // 3.获取所有tag信息
+        Map<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
+        try {
+            tagMap = transTag(tagIdsMap_temp);
+            for (Integer key : tagMap.keySet())
+                homeView.getTags().add(tagMap.get(key));
+        } catch (Exception e) {
+            logger.error("请求wordpress-tag服务错误:" + tagIdsMap_temp, e);
+            throw new Exception(e);
+        }
 
-		// 5.获取所有的media信息
-		Map<Integer, Media> mediaMap = transMedia(postList);
+        // 4.获取所有user信息
+        Map<Integer, User> userMap = new HashMap<Integer, User>();
+        try {
+            userMap = transUser(userIdsMap_temp);
+            for (Integer key : userMap.keySet())
+                homeView.getUsers().add(userMap.get(key));
+        } catch (Exception e) {
+            logger.error("请求wordpress-user服务错误:" + userIdsMap_temp, e);
+            throw new Exception(e);
+        }
 
-		// 重新组装所有的post
-		for (Post post : postList) {
-			post.setAuthor(userMap.get(post.getAuthorId()));
-			for (Integer key : post.getCategoryIds())
-				post.getCategories().add(categoryMap.get(key));
+        // 5.获取所有的media信息
+        Map<Integer, Media> mediaMap = transMedia(postList);
 
-			for (Integer key : post.getTagIds())
-				post.getTags().add(tagMap.get(key));
+        // 重新组装所有的post
+        for (Post post : postList) {
+            post.setAuthor(userMap.get(post.getAuthorId()));
+            for (Integer key : post.getCategoryIds())
+                post.getCategories().add(categoryMap.get(key));
 
-			post.setFeaturedMedia(mediaMap.get(post.getId()));
+            for (Integer key : post.getTagIds())
+                post.getTags().add(tagMap.get(key));
 
-			Integer location = post.getLoaction();
-			if (!homeView.getPostMap().containsKey(location))
-				homeView.getPostMap().put(location, new ArrayList<Post>());
-			homeView.getPostMap().get(location).add(post);
-			post.setThumbnailMediaDetail(
-					getPostFeaturedmedia(homeViewConfigProperties.getSelfThumbnail(location), post.getFeaturedMedia()));
-		}
+            post.setFeaturedMedia(mediaMap.get(post.getWp_featuredmedia_id()));
 
-		redisService.set("chain_homeView", homeView);
-		return true;
-	}
+            Integer location = post.getLoaction();
+            if (!homeView.getPostMap().containsKey(location))
+                homeView.getPostMap().put(location, new ArrayList<Post>());
+            homeView.getPostMap().get(location).add(post);
+            post.setThumbnailMediaDetail(getPostFeaturedmedia(homeViewConfigProperties.getSelfThumbnail(location), post.getFeaturedMedia()));
+        }
 
-	/**
-	 * 组装分类信息
-	 * 
-	 * @param categoryIdsMap
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<Integer, Category> transCategory(Map<Integer, Integer> categoryIdsMap) throws Exception {
-		StringBuffer categoryUrl = new StringBuffer(homeViewConfigProperties.getCategoryUrl()).append(Question)
-				.append("per_page").append(EQUAL).append(categoryIdsMap.size()).append(AND).append("include")
-				.append(EQUAL);
-		Map<Integer, Category> map = new HashMap<Integer, Category>();
-		for (Integer key : categoryIdsMap.keySet()) {
-			categoryUrl.append(key).append(COMMA);
-		}
-		cutStringBuffer(categoryUrl, COMMA); // 去掉最后一个'&'符号
+        redisService.set("chain_homeView", homeView);
+        return true;
+    }
 
-		JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(categoryUrl.toString()));
+    /**
+     * 组装分类信息
+     * 
+     * @param categoryIdsMap
+     * @return
+     * @throws Exception
+     */
+    private Map<Integer, Category> transCategory(Map<Integer, Integer> categoryIdsMap) throws Exception {
+        StringBuffer categoryUrl = new StringBuffer(homeViewConfigProperties.getCategoryUrl()).append(Question).append("per_page").append(EQUAL).append(categoryIdsMap.size())
+                .append(AND).append("include").append(EQUAL);
+        Map<Integer, Category> map = new HashMap<Integer, Category>();
+        for (Integer key : categoryIdsMap.keySet()) {
+            categoryUrl.append(key).append(COMMA);
+        }
+        cutStringBuffer(categoryUrl, COMMA); // 去掉最后一个'&'符号
 
-		for (int i = 0; i < arrayJson.size(); i++) {
-			Category category = new Category();
-			JSONObject obj = arrayJson.getJSONObject(i);
-			int id = obj.getInt("id");
-			category.setId(id);
-			category.setCount(obj.getInt("count"));
-			category.setDescription(obj.getString("description"));
-			category.setName(obj.getString("name"));
-			category.setSlug(obj.getString("slug"));
-			category.setParent(obj.getInt("parent"));
-			map.put(Integer.valueOf(id), category);
-		}
-		return map;
-	}
+        JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(categoryUrl.toString()));
 
-	/**
-	 * 组装用户信息
-	 * 
-	 * @param userIdsMap
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<Integer, User> transUser(Map<Integer, Integer> userIdsMap) throws Exception {
-		String[] avatar_urls = new String[] { "24", "48", "96" };
-		StringBuffer userUrl = new StringBuffer(homeViewConfigProperties.getUserUrl()).append(Question)
-				.append("per_page").append(EQUAL).append(userIdsMap.size()).append(AND).append("include").append(EQUAL);
-		Map<Integer, User> map = new HashMap<Integer, User>();
-		for (Integer key : userIdsMap.keySet()) {
-			userUrl.append(key).append(COMMA);
-		}
-		cutStringBuffer(userUrl, COMMA); // 去掉最后一个'&'符号
+        for (int i = 0; i < arrayJson.size(); i++) {
+            Category category = new Category();
+            JSONObject obj = arrayJson.getJSONObject(i);
+            int id = obj.getInt("id");
+            category.setId(id);
+            category.setCount(obj.getInt("count"));
+            category.setDescription(obj.getString("description"));
+            category.setName(obj.getString("name"));
+            category.setSlug(obj.getString("slug"));
+            category.setParent(obj.getInt("parent"));
+            map.put(Integer.valueOf(id), category);
+        }
+        return map;
+    }
 
-		JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(userUrl.toString()));
+    /**
+     * 组装用户信息
+     * 
+     * @param userIdsMap
+     * @return
+     * @throws Exception
+     */
+    private Map<Integer, User> transUser(Map<Integer, Integer> userIdsMap) throws Exception {
+        String[] avatar_urls = new String[] {"24", "48", "96"};
+        StringBuffer userUrl = new StringBuffer(homeViewConfigProperties.getUserUrl()).append(Question).append("per_page").append(EQUAL).append(userIdsMap.size()).append(AND)
+                .append("include").append(EQUAL);
+        Map<Integer, User> map = new HashMap<Integer, User>();
+        for (Integer key : userIdsMap.keySet()) {
+            userUrl.append(key).append(COMMA);
+        }
+        cutStringBuffer(userUrl, COMMA); // 去掉最后一个'&'符号
 
-		for (int i = 0; i < arrayJson.size(); i++) {
-			User user = new User();
-			JSONObject obj = arrayJson.getJSONObject(i);
-			int id = obj.getInt("id");
-			user.setId(id);
-			user.setName(obj.getString("name"));
-			user.setDescription(obj.getString("description"));
-			for (String item : avatar_urls)
-				user.getAvatar_urls().put(new Integer(item), obj.getJSONObject("avatar_urls").getString(item));
-			map.put(Integer.valueOf(id), user);
-		}
-		return map;
-	}
+        JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(userUrl.toString()));
 
-	/**
-	 * 组装标签信息
-	 * 
-	 * @param tagIdsMap
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<Integer, Tag> transTag(Map<Integer, Integer> tagIdsMap) throws Exception {
-		StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getTagUrl()).append(Question).append("per_page")
-				.append(EQUAL).append(tagIdsMap.size()).append(AND).append("include").append(EQUAL);
-		Map<Integer, Tag> map = new HashMap<Integer, Tag>();
-		for (Integer key : tagIdsMap.keySet()) {
-			tagUrl.append(key).append(COMMA);
-		}
-		cutStringBuffer(tagUrl, COMMA); // 去掉最后一个'&'符号
+        for (int i = 0; i < arrayJson.size(); i++) {
+            User user = new User();
+            JSONObject obj = arrayJson.getJSONObject(i);
+            int id = obj.getInt("id");
+            user.setId(id);
+            user.setName(obj.getString("name"));
+            user.setDescription(obj.getString("description"));
+            for (String item : avatar_urls)
+                user.getAvatar_urls().put(new Integer(item), obj.getJSONObject("avatar_urls").getString(item));
+            map.put(Integer.valueOf(id), user);
+        }
+        return map;
+    }
 
-		JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(tagUrl.toString()));
+    /**
+     * 组装标签信息
+     * 
+     * @param tagIdsMap
+     * @return
+     * @throws Exception
+     */
+    private Map<Integer, Tag> transTag(Map<Integer, Integer> tagIdsMap) throws Exception {
+        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getTagUrl()).append(Question).append("per_page").append(EQUAL).append(tagIdsMap.size()).append(AND)
+                .append("include").append(EQUAL);
+        Map<Integer, Tag> map = new HashMap<Integer, Tag>();
+        for (Integer key : tagIdsMap.keySet()) {
+            tagUrl.append(key).append(COMMA);
+        }
+        cutStringBuffer(tagUrl, COMMA); // 去掉最后一个'&'符号
 
-		for (int i = 0; i < arrayJson.size(); i++) {
-			Tag tag = new Tag();
-			JSONObject obj = arrayJson.getJSONObject(i);
-			int id = obj.getInt("id");
-			tag.setId(id);
-			tag.setCount(obj.getInt("count"));
-			tag.setName(obj.getString("name"));
-			tag.setDescription(obj.getString("description"));
-			tag.setSlug(obj.getString("slug"));
-			map.put(Integer.valueOf(id), tag);
-		}
-		return map;
-	}
+        JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(tagUrl.toString()));
 
-	private MediaDetail getPostFeaturedmedia(String thumbnail, Media media) {
-		if (thumbnail == null || "".equals(thumbnail) || media == null)
-			return null;
+        for (int i = 0; i < arrayJson.size(); i++) {
+            Tag tag = new Tag();
+            JSONObject obj = arrayJson.getJSONObject(i);
+            int id = obj.getInt("id");
+            tag.setId(id);
+            tag.setCount(obj.getInt("count"));
+            tag.setName(obj.getString("name"));
+            tag.setDescription(obj.getString("description"));
+            tag.setSlug(obj.getString("slug"));
+            map.put(Integer.valueOf(id), tag);
+        }
+        return map;
+    }
 
-		double w = Double.parseDouble(thumbnail.split(COMMA)[0].trim());
-		double h = Double.parseDouble(thumbnail.split(COMMA)[1].trim());
-		double scale = new BigDecimal(w / h).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-		media.getMedia_details().sort((MediaDetail d1, MediaDetail d2) -> mediaCompare(d1).compareTo(mediaCompare(d2)));
 
-		MediaDetail minDetail = media.getMedia_details().get(0);
-		if (scale <= new BigDecimal(mediaCompare(minDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP)
-				.doubleValue())
-			return minDetail;
 
-		MediaDetail maxDetail = media.getMedia_details().get(media.getMedia_details().size() - 1);
-		if (scale >= new BigDecimal(mediaCompare(maxDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP)
-				.doubleValue())
-			return maxDetail;
+    /**
+     * 组装媒体信息
+     * 
+     * @param postList
+     * @return
+     * @throws Exception
+     */
+    private Map<Integer, Media> transMedia(List<Post> postList) throws Exception {
+        String[] sizeNames = new String[] {"thumbnail", "medium", "medium_large", "large", "post-thumbnail", "hoverex-thumb-huge", "hoverex-thumb-big", "hoverex-thumb-med",
+                "hoverex-thumb-med-small", "hoverex-thumb-med-avatar", "hoverex-thumb-tiny", "hoverex-thumb-masonry-big", "hoverex-thumb-masonry", "hoverex-thumb-magazine-extra",
+                "hoverex-thumb-magazine-modern-big", "hoverex-thumb-magazine-modern-small", "hoverex-thumb-extra", "hoverex-thumb-extra-big", "trx_addons-thumb-small",
+                "trx_addons-thumb-portrait", "trx_addons-thumb-avatar", "full"};
+        Map<Integer, Media> map = new HashMap<Integer, Media>();
 
-		int middleIndex = (media.getMedia_details().size() - 1) / 2;
-		MediaDetail middleDetail = media.getMedia_details().get(middleIndex);
-		double middle_scale = new BigDecimal(mediaCompare(middleDetail).doubleValue())
-				.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        List<Integer> newIds = new ArrayList<Integer>();
 
-//		for (MediaDetail d : media.getMedia_details())
-//			System.out.println(d.getName() + ":" + d.getWidth() + "*" + d.getHeight() + " | "
-//					+ Double.valueOf(d.getWidth()) / Double.valueOf(d.getHeight()) + " | "
-//					+ (mediaCompare(d).doubleValue() - scale));
+        for (Post item : postList) {
+            if (item.getWp_featuredmedia_id() != 0)
+                newIds.add(Integer.valueOf(item.getWp_featuredmedia_id()));
+        }
+        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getMediaUrl()).append(Question).append("per_page").append(EQUAL).append(newIds.size()).append(AND)
+                .append("orderby").append(EQUAL).append("id").append(AND).append("order").append(EQUAL).append("asc").append(AND).append("include").append(EQUAL);
 
-		for (int i = 0; i < media.getMedia_details().size(); i++) {
-			MediaDetail currentMedia = media.getMedia_details().get(i);
-			double curr = new BigDecimal(mediaCompare(currentMedia).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP)
-					.doubleValue();
-			if (curr - scale >= 0) {
-				MediaDetail nextMedia = media.getMedia_details().get(i + 1);
-				double next = new BigDecimal(mediaCompare(nextMedia).doubleValue())
-						.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-				return Math.abs(next - scale) > Math.abs(curr - scale) ? currentMedia : nextMedia;
-			}
-		}
-		return null;
-	}
+        newIds.sort(Integer::compare);
+        for (Integer id : newIds) {
+            tagUrl.append(id).append(COMMA);
+        }
+        cutStringBuffer(tagUrl, COMMA); // 去掉最后一个'&'符号
 
-	/**
-	 * 组装媒体信息
-	 * 
-	 * @param postList
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<Integer, Media> transMedia(List<Post> postList) throws Exception {
-		String[] sizeNames = new String[] { "thumbnail", "medium", "medium_large", "large", "post-thumbnail",
-				"hoverex-thumb-huge", "hoverex-thumb-big", "hoverex-thumb-med", "hoverex-thumb-med-small",
-				"hoverex-thumb-med-avatar", "hoverex-thumb-tiny", "hoverex-thumb-masonry-big", "hoverex-thumb-masonry",
-				"hoverex-thumb-magazine-extra", "hoverex-thumb-magazine-modern-big",
-				"hoverex-thumb-magazine-modern-small", "hoverex-thumb-extra", "hoverex-thumb-extra-big",
-				"trx_addons-thumb-small", "trx_addons-thumb-portrait", "trx_addons-thumb-avatar", "full" };
-		Map<Integer, Media> map = new HashMap<Integer, Media>();
+        JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(tagUrl.toString()));
 
-		List<Integer> newIds = new ArrayList<Integer>();
+        for (int i = 0; i < arrayJson.size(); i++) {
+            Media media = new Media();
+            JSONObject obj = arrayJson.getJSONObject(i);
+            int id = obj.getInt("id");
+            media.setId(id);
+            media.setMedia_type(obj.getString("media_type"));
+            media.setMime_type(obj.getString("mime_type"));
 
-		for (Post item : postList) {
-			if (null == item.getJetpack_featured_media_url() || "".equals(item.getJetpack_featured_media_url()))
-				continue;
-			newIds.add(Integer.valueOf(item.getId()));
-		}
-		StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getMediaUrl()).append(Question)
-				.append("per_page").append(EQUAL).append(newIds.size()).append(AND).append("parent").append(EQUAL);
+            JSONObject sizes = obj.getJSONObject("media_details").getJSONObject("sizes");
+            List<MediaDetail> mediaDetailList = new ArrayList<MediaDetail>();
+            for (String key : sizeNames) {
+                MediaDetail detail = new MediaDetail();
+                if (!sizes.containsKey(key))
+                    continue;
+                JSONObject img = sizes.getJSONObject(key);
+                detail.setName(key);
+                detail.setFile(img.getString("file"));
+                detail.setWidth(img.getInt("width"));
+                detail.setHeight(img.getInt("height"));
+                detail.setMime_type(img.getString("mime_type"));
+                detail.setSource_url(img.getString("source_url"));
+                mediaDetailList.add(detail);
+            }
+            media.setMedia_details(mediaDetailList);
+            map.put(Integer.valueOf(id), media);
+        }
+        return map;
+    }
 
-		newIds.sort(Integer::compare);
-		for (Integer id : newIds) {
-			tagUrl.append(id).append(COMMA);
-		}
-		cutStringBuffer(tagUrl, COMMA); // 去掉最后一个'&'符号
+    /**
+     * 
+     * @param thumbnail
+     * @param media
+     * @return
+     */
+    private MediaDetail getPostFeaturedmedia(String thumbnail, Media media) {
+        if (thumbnail == null || "".equals(thumbnail) || media == null)
+            return null;
 
-		JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(tagUrl.toString()));
+        double w = Double.parseDouble(thumbnail.split(COMMA)[0].trim());
+        double h = Double.parseDouble(thumbnail.split(COMMA)[1].trim());
+        double scale = new BigDecimal(w / h).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        media.getMedia_details().sort((MediaDetail d1, MediaDetail d2) -> mediaCompare(d1).compareTo(mediaCompare(d2)));
 
-		for (int i = 0; i < arrayJson.size(); i++) {
-			Media media = new Media();
-			JSONObject obj = arrayJson.getJSONObject(i);
-			int id = obj.getInt("id");
-			media.setId(id);
-			media.setMedia_type(obj.getString("media_type"));
-			media.setMime_type(obj.getString("mime_type"));
+        MediaDetail minDetail = media.getMedia_details().get(0);
+        if (scale <= new BigDecimal(mediaCompare(minDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+            return minDetail;
 
-			JSONObject sizes = obj.getJSONObject("media_details").getJSONObject("sizes");
-			List<MediaDetail> mediaDetailList = new ArrayList<MediaDetail>();
-			for (String key : sizeNames) {
-				MediaDetail detail = new MediaDetail();
-				if (!sizes.containsKey(key))
-					continue;
-				JSONObject img = sizes.getJSONObject(key);
-				detail.setName(key);
-				detail.setFile(img.getString("file"));
-				detail.setWidth(img.getInt("width"));
-				detail.setHeight(img.getInt("height"));
-				detail.setMime_type(img.getString("mime_type"));
-				detail.setSource_url(img.getString("source_url"));
-				mediaDetailList.add(detail);
-			}
-			media.setMedia_details(mediaDetailList);
-			map.put(newIds.get(i), media);
-		}
-		return map;
-	}
+        MediaDetail maxDetail = media.getMedia_details().get(media.getMedia_details().size() - 1);
+        if (scale >= new BigDecimal(mediaCompare(maxDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+            return maxDetail;
 
-	@Override
-	public boolean financeDepart() throws Exception {
-		int postId = financeDepartViewConfigProperties.getId();
-		FinanceDepartView financeDepartView = new FinanceDepartView();
-		financeDepartView.setId(postId);
-		try {
-			StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
-			JSONObject obj = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
-			String content = obj.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>",
-					"");
+        int middleIndex = (media.getMedia_details().size() - 1) / 2;
+        MediaDetail middleDetail = media.getMedia_details().get(middleIndex);
+        double middle_scale = new BigDecimal(mediaCompare(middleDetail).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
-			for (String item : content.split("\n")) {
-				String[] cx = item.split("/-/");
-				financeDepartView.add(cx[0], cx[1], cx[2]);
-			}
+        // System.out.println("-----------------------");
+        // for (MediaDetail d : media.getMedia_details())
+        // System.out.println(d.getName() + ":" + d.getWidth() + "*" + d.getHeight() + " | " +
+        // Double.valueOf(d.getWidth()) / Double.valueOf(d.getHeight()) + " | "
+        // + (mediaCompare(d).doubleValue() - scale));
+        // System.out.println("-----------------------\n");
+        for (int i = 0; i < media.getMedia_details().size(); i++) {
+            MediaDetail currentMedia = media.getMedia_details().get(i);
+            double curr = new BigDecimal(mediaCompare(currentMedia).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            if (curr - scale >= 0) {
+                MediaDetail nextMedia = media.getMedia_details().get(i + 1);
+                double next = new BigDecimal(mediaCompare(nextMedia).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                return Math.abs(next - scale) > Math.abs(curr - scale) ? currentMedia : nextMedia;
+            }
+        }
+        return null;
+    }
 
-		} catch (Exception e) {
-			logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
-			throw new Exception(e);
-		}
+    @Override
+    public boolean financeDepart() throws Exception {
+        int postId = financeDepartViewConfigProperties.getId();
+        FinanceDepartView financeDepartView = new FinanceDepartView();
+        financeDepartView.setId(postId);
+        try {
+            StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
+            JSONObject obj = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
+            String content = obj.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>", "");
 
-		redisService.set("chain_financeDepartView", financeDepartView);
-		return true;
-	}
+            for (String item : content.split("\n")) {
+                String[] cx = item.split("/-/");
+                financeDepartView.add(cx[0], cx[1], cx[2]);
+            }
 
-	@Override
-	public boolean rightPopular() throws Exception {
-		int postId = rightPopularViewConfigProperties.getId();
-		RightPopularView rightPopularView = new RightPopularView();
-		rightPopularView.setId(postId);
-		try {
-			StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
-			JSONObject popularPost = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
-			String content = popularPost.getJSONObject("content").getString("rendered").replaceAll("<p>", "")
-					.replaceAll("</p>", "");
+        } catch (Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
+            throw new Exception(e);
+        }
 
-			url.setLength(0);
-			url.append(homeViewConfigProperties.getPostUrl()).append(Question).append("include").append(EQUAL);
-			for (String item : content.split("\n"))
-				url.append(item.split(EQUAL)[0]).append(COMMA);
-			cutStringBuffer(url, COMMA); // 去掉最后一个','符号
+        redisService.set("chain_financeDepartView", financeDepartView);
+        return true;
+    }
 
-			JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
-			for (int i = 0; i < arrayJson.size(); i++) {
-				JSONObject obj = arrayJson.getJSONObject(i);
-				Post post = new Post();
-				post.setId(obj.getInt("id"));
-				post.setDate(obj.getString("date"));
-				post.setStatus(obj.getString("status"));
-				post.setTitle(obj.getJSONObject("title").getString("rendered"));
-				post.setContent(obj.getJSONObject("content").getString("rendered"));
-				post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
-				post.setComment_status(obj.getString("comment_status"));
-				post.setPing_status(obj.getString("status"));
-				post.setSticky(obj.getBoolean("sticky"));
-				post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
+    @Override
+    public boolean rightPopular() throws Exception {
+        int postId = rightPopularViewConfigProperties.getId();
+        RightPopularView rightPopularView = new RightPopularView();
+        rightPopularView.setId(postId);
+        try {
+            StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(DIAGONAL).append(postId);
+            JSONObject popularPost = JSONObject.fromObject(httpUtil.sendGet(url.toString()));
+            String content = popularPost.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>", "");
 
-				JSONArray metaArray = obj.getJSONObject("metadata").getJSONArray("_vc_post_settings");
-				if (metaArray != null && metaArray.size() > 0)
-					post.setIndex(metaArray.getString(0));
+            url.setLength(0);
+            url.append(homeViewConfigProperties.getPostUrl()).append(Question).append("include").append(EQUAL);
+            for (String item : content.split("\n"))
+                url.append(item.split(EQUAL)[0]).append(COMMA);
+            cutStringBuffer(url, COMMA); // 去掉最后一个','符号
 
-				rightPopularView.getList().add(post);
-			}
+            JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
+            for (int i = 0; i < arrayJson.size(); i++) {
+                JSONObject obj = arrayJson.getJSONObject(i);
+                Post post = new Post();
+                post.setId(obj.getInt("id"));
+                post.setDate(obj.getString("date"));
+                post.setStatus(obj.getString("status"));
+                post.setTitle(obj.getJSONObject("title").getString("rendered"));
+                post.setContent(obj.getJSONObject("content").getString("rendered"));
+                post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
+                post.setComment_status(obj.getString("comment_status"));
+                post.setPing_status(obj.getString("status"));
+                post.setSticky(obj.getBoolean("sticky"));
+                post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
 
-			Map<Integer, Media> mediaMap = transMedia(rightPopularView.getList());
+                JSONObject metaArray = obj.getJSONObject("metadata");
+                for (Object key : metaArray.keySet()) {
+                    if (metaArray.has("sort_id")) {
+                        post.setIndex(String.valueOf(metaArray.getJSONArray("sort_id").get(0)));
+                    }
+                    LinkedHashMap<String, Object> linkmap = new LinkedHashMap<String, Object>();
+                    linkmap.put(key.toString(), metaArray.get(key));
+                    post.getMetadata().add(linkmap);
+                }
 
-			for (Post post : rightPopularView.getList()) {
-				post.setFeaturedMedia(mediaMap.get(post.getId()));
-				post.setThumbnailMediaDetail(
-						getPostFeaturedmedia(rightPopularViewConfigProperties.getThumbnail(), post.getFeaturedMedia()));
-			}
-		} catch (Exception e) {
-			logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
-			throw new Exception(e);
-		}
+                Object featured_media = obj.get("featured_media");
+                if (featured_media != null && !"".equals(featured_media.toString())) {
+                    post.setWp_featuredmedia_id(Integer.parseInt(featured_media.toString()));
+                }
 
-		redisService.set("chain_rightPopularView", rightPopularView);
-		return true;
+                // if (obj.getJSONObject("_links").has("wp:featuredmedia")) {
+                // JSONObject temp =
+                // JSONObject.fromObject(obj.getJSONObject("_links").getJSONArray("wp:featuredmedia").get(0));
+                // post.setWp_featuredmedia_id(Integer.parseInt(temp.getString("href").substring(temp.getString("href").lastIndexOf("/")
+                // + 1)));
+                // }
 
-	}
+                rightPopularView.getList().add(post);
+            }
 
-	/**
-	 * 
-	 * @param sb
-	 * @param c
-	 */
-	private void cutStringBuffer(StringBuffer sb, String c) {
-		int index = sb.lastIndexOf(c);
-		if (index == sb.length() - 1)
-			sb.deleteCharAt(index);
-	}
+            Map<Integer, Media> mediaMap = transMedia(rightPopularView.getList());
 
-	/**
-	 * 
-	 * @param m
-	 * @return
-	 */
-	private Double mediaCompare(MediaDetail m) {
-		double w = m.getWidth();
-		double h = m.getHeight();
-		return Double.valueOf(w / h);
-	}
+            for (Post post : rightPopularView.getList()) {
+                post.setFeaturedMedia(mediaMap.get(post.getWp_featuredmedia_id()));
+                post.setThumbnailMediaDetail(getPostFeaturedmedia(rightPopularViewConfigProperties.getThumbnail(), post.getFeaturedMedia()));
+            }
+        } catch (Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties.getListmap(), e);
+            throw new Exception(e);
+        }
+
+        redisService.set("chain_rightPopularView", rightPopularView);
+        return true;
+
+    }
+
+    /**
+     * 
+     * @param sb
+     * @param c
+     */
+    private void cutStringBuffer(StringBuffer sb, String c) {
+        int index = sb.lastIndexOf(c);
+        if (index == sb.length() - 1)
+            sb.deleteCharAt(index);
+    }
+
+    /**
+     * 
+     * @param m
+     * @return
+     */
+    private Double mediaCompare(MediaDetail m) {
+        double w = m.getWidth();
+        double h = m.getHeight();
+        return Double.valueOf(w / h);
+    }
 }
