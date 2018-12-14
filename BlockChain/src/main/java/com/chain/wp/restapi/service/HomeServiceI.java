@@ -1,5 +1,9 @@
 package com.chain.wp.restapi.service;
 
+import java.util.List;
+
+import com.chain.wp.restapi.entity.Post;
+
 public interface HomeServiceI {
     /**
      * @Title 首页内容封装
@@ -26,4 +30,14 @@ public interface HomeServiceI {
      * @throws Exception
      */
     public boolean rightPopular() throws Exception;
+
+    /**
+     * @Title 文章下方推荐文章封装
+     * 
+     * @param cats
+     * @parem postId
+     * @return
+     * @throws Exception
+     */
+    public List<Post> ctRecommend(String cats, String postId) throws Exception;
 }

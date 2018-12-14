@@ -1,5 +1,7 @@
 package com.chain.wp.restapi.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -8,9 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chain.redis.service.IRedisService;
+import com.chain.wp.restapi.entity.CommentUserInfo;
+import com.chain.wp.restapi.entity.Post;
+import com.chain.wp.restapi.service.CommentUserInfoServiceI;
+import com.chain.wp.restapi.service.HomeServiceI;
 import com.chain.wp.restapi.view.FinanceDepartView;
 import com.chain.wp.restapi.view.HomeView;
 import com.chain.wp.restapi.view.RightPopularView;
@@ -22,6 +29,12 @@ public class HomeDateController {
     private final static Logger logger = LoggerFactory.getLogger(HomeDateController.class);
     @Autowired
     private IRedisService redisService;
+
+    @Autowired
+    private HomeServiceI homeService;
+
+    @Autowired
+    private CommentUserInfoServiceI commentUserInfoService;
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public HomeView home(HttpServletResponse res) {
@@ -39,5 +52,25 @@ public class HomeDateController {
     public RightPopularView RightPopular(HttpServletResponse res) {
         RightPopularView rightPopularView = (RightPopularView) redisService.get("chain_rightPopularView");
         return rightPopularView;
+    }
+
+    @RequestMapping(value = "/ctRecommend", method = RequestMethod.GET)
+    public List<Post> ctRecommend(@RequestParam(value = "cats", required = true) String cats, @RequestParam(value = "postId", required = true) String postId) {
+        List<Post> list;
+        try {
+            list = homeService.ctRecommend(cats, postId);
+        } catch (Exception e) {
+            return null;
+        }
+        return list;
+    }
+
+    @RequestMapping(value = "/addWpCommentUser", method = RequestMethod.POST)
+    public boolean ctRecommend(CommentUserInfo user) {
+        if (commentUserInfoService.selectOne(user).intValue() > 0)
+            return false;
+
+        commentUserInfoService.insert(user);
+        return true;
     }
 }

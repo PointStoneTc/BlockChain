@@ -72,6 +72,10 @@ wordpress:
       id: 6374
       thumbnail: 300,300
       desc: 新闻内容页右侧热点文章模块
+    ctrecommend:
+      thumbnail: 300,150
+      expire-time: 300
+      desc: 新闻内容页下方文章推荐模块
       
 #==================== coin ============================
 coin:

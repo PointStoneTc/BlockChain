@@ -3,11 +3,12 @@ package com.chain.wp.restapi.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.chain.redis.service.IRedisService;
 import com.chain.util.HttpUtil;
+import com.chain.wp.restapi.config.CtRecommendViewConfigProperties;
 import com.chain.wp.restapi.config.FinanceDepartViewConfigProperties;
 import com.chain.wp.restapi.config.HomeViewConfigProperties;
 import com.chain.wp.restapi.config.RightPopularViewConfigProperties;
@@ -37,7 +39,7 @@ import net.sf.json.JSONObject;
 public class HomeServiceImpl implements HomeServiceI {
     private final static Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
     final static String COMMA = ",";
-    final static String Question = "?";
+    final static String QUESTION = "?";
     final static String AND = "&";
     final static String EQUAL = "=";
     final static String DIAGONAL = "/";
@@ -50,6 +52,9 @@ public class HomeServiceImpl implements HomeServiceI {
 
     @Autowired
     private RightPopularViewConfigProperties rightPopularViewConfigProperties;
+
+    @Autowired
+    private CtRecommendViewConfigProperties ctRecommendViewConfigProperties;
 
     @Autowired
     private IRedisService redisService;
@@ -72,7 +77,7 @@ public class HomeServiceImpl implements HomeServiceI {
             for (Map<String, String> map : homeViewConfigProperties.getListmap()) {
                 if ("false".equals(map.get("active"))) // 只有活动的模块才能加载
                     continue;
-                StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(Question);
+                StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(QUESTION);
                 Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
                 while (entries.hasNext()) {
                     Map.Entry<String, String> entry = entries.next();
@@ -206,7 +211,7 @@ public class HomeServiceImpl implements HomeServiceI {
      * @throws Exception
      */
     private Map<Integer, Category> transCategory(Map<Integer, Integer> categoryIdsMap) throws Exception {
-        StringBuffer categoryUrl = new StringBuffer(homeViewConfigProperties.getCategoryUrl()).append(Question).append("per_page").append(EQUAL).append(categoryIdsMap.size())
+        StringBuffer categoryUrl = new StringBuffer(homeViewConfigProperties.getCategoryUrl()).append(QUESTION).append("per_page").append(EQUAL).append(categoryIdsMap.size())
                 .append(AND).append("include").append(EQUAL);
         Map<Integer, Category> map = new HashMap<Integer, Category>();
         for (Integer key : categoryIdsMap.keySet()) {
@@ -240,7 +245,7 @@ public class HomeServiceImpl implements HomeServiceI {
      */
     private Map<Integer, User> transUser(Map<Integer, Integer> userIdsMap) throws Exception {
         String[] avatar_urls = new String[] {"24", "48", "96"};
-        StringBuffer userUrl = new StringBuffer(homeViewConfigProperties.getUserUrl()).append(Question).append("per_page").append(EQUAL).append(userIdsMap.size()).append(AND)
+        StringBuffer userUrl = new StringBuffer(homeViewConfigProperties.getUserUrl()).append(QUESTION).append("per_page").append(EQUAL).append(userIdsMap.size()).append(AND)
                 .append("include").append(EQUAL);
         Map<Integer, User> map = new HashMap<Integer, User>();
         for (Integer key : userIdsMap.keySet()) {
@@ -272,7 +277,7 @@ public class HomeServiceImpl implements HomeServiceI {
      * @throws Exception
      */
     private Map<Integer, Tag> transTag(Map<Integer, Integer> tagIdsMap) throws Exception {
-        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getTagUrl()).append(Question).append("per_page").append(EQUAL).append(tagIdsMap.size()).append(AND)
+        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getTagUrl()).append(QUESTION).append("per_page").append(EQUAL).append(tagIdsMap.size()).append(AND)
                 .append("include").append(EQUAL);
         Map<Integer, Tag> map = new HashMap<Integer, Tag>();
         for (Integer key : tagIdsMap.keySet()) {
@@ -312,13 +317,16 @@ public class HomeServiceImpl implements HomeServiceI {
                 "trx_addons-thumb-portrait", "trx_addons-thumb-avatar", "full"};
         Map<Integer, Media> map = new HashMap<Integer, Media>();
 
+        if (postList.size() == 0)
+            return map;
+
         List<Integer> newIds = new ArrayList<Integer>();
 
         for (Post item : postList) {
             if (item.getWp_featuredmedia_id() != 0)
                 newIds.add(Integer.valueOf(item.getWp_featuredmedia_id()));
         }
-        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getMediaUrl()).append(Question).append("per_page").append(EQUAL).append(newIds.size()).append(AND)
+        StringBuffer tagUrl = new StringBuffer(homeViewConfigProperties.getMediaUrl()).append(QUESTION).append("per_page").append(EQUAL).append(newIds.size()).append(AND)
                 .append("orderby").append(EQUAL).append("id").append(AND).append("order").append(EQUAL).append("asc").append(AND).append("include").append(EQUAL);
 
         newIds.sort(Integer::compare);
@@ -438,7 +446,7 @@ public class HomeServiceImpl implements HomeServiceI {
             String content = popularPost.getJSONObject("content").getString("rendered").replaceAll("<p>", "").replaceAll("</p>", "");
 
             url.setLength(0);
-            url.append(homeViewConfigProperties.getPostUrl()).append(Question).append("include").append(EQUAL);
+            url.append(homeViewConfigProperties.getPostUrl()).append(QUESTION).append("include").append(EQUAL);
             for (String item : content.split("\n"))
                 url.append(item.split(EQUAL)[0]).append(COMMA);
             cutStringBuffer(url, COMMA); // 去掉最后一个','符号
@@ -449,36 +457,14 @@ public class HomeServiceImpl implements HomeServiceI {
                 Post post = new Post();
                 post.setId(obj.getInt("id"));
                 post.setDate(obj.getString("date"));
-                post.setStatus(obj.getString("status"));
                 post.setTitle(obj.getJSONObject("title").getString("rendered"));
-                post.setContent(obj.getJSONObject("content").getString("rendered"));
                 post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
-                post.setComment_status(obj.getString("comment_status"));
-                post.setPing_status(obj.getString("status"));
-                post.setSticky(obj.getBoolean("sticky"));
                 post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
-
-                JSONObject metaArray = obj.getJSONObject("metadata");
-                for (Object key : metaArray.keySet()) {
-                    if (metaArray.has("sort_id")) {
-                        post.setIndex(String.valueOf(metaArray.getJSONArray("sort_id").get(0)));
-                    }
-                    LinkedHashMap<String, Object> linkmap = new LinkedHashMap<String, Object>();
-                    linkmap.put(key.toString(), metaArray.get(key));
-                    post.getMetadata().add(linkmap);
-                }
 
                 Object featured_media = obj.get("featured_media");
                 if (featured_media != null && !"".equals(featured_media.toString())) {
                     post.setWp_featuredmedia_id(Integer.parseInt(featured_media.toString()));
                 }
-
-                // if (obj.getJSONObject("_links").has("wp:featuredmedia")) {
-                // JSONObject temp =
-                // JSONObject.fromObject(obj.getJSONObject("_links").getJSONArray("wp:featuredmedia").get(0));
-                // post.setWp_featuredmedia_id(Integer.parseInt(temp.getString("href").substring(temp.getString("href").lastIndexOf("/")
-                // + 1)));
-                // }
 
                 rightPopularView.getList().add(post);
             }
@@ -497,6 +483,69 @@ public class HomeServiceImpl implements HomeServiceI {
         redisService.set("chain_rightPopularView", rightPopularView);
         return true;
 
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Post> ctRecommend(String cats, String postId) throws Exception {
+        Object catchList = redisService.get("chain_ctRecommendView:" + cats);
+        if (catchList != null)
+            return (List<Post>) catchList;
+
+        List<Post> list = new ArrayList<Post>();
+        try {
+            StringBuffer url = new StringBuffer(homeViewConfigProperties.getPostUrl()).append(QUESTION).append("categories").append(EQUAL).append(cats).append(AND)
+                    .append("per_page").append(EQUAL).append(50).append(AND).append("exclude").append(EQUAL).append(postId);
+            JSONArray arrayJson = JSONArray.fromObject(httpUtil.sendGet(url.toString()));
+            for (int i = 0; i < arrayJson.size(); i++) {
+                JSONObject obj = arrayJson.getJSONObject(i);
+                Post post = new Post();
+                post.setId(obj.getInt("id"));
+                post.setDate(obj.getString("date"));
+                post.setTitle(obj.getJSONObject("title").getString("rendered"));
+                post.setExcerpt(obj.getJSONObject("excerpt").getString("rendered"));
+                post.setJetpack_featured_media_url(obj.getString("jetpack_featured_media_url"));
+
+                Object featured_media = obj.get("featured_media");
+                if (featured_media != null && !"".equals(featured_media.toString())) {
+                    post.setWp_featuredmedia_id(Integer.parseInt(featured_media.toString()));
+                }
+
+                list.add(post);
+            }
+
+            Map<Integer, Media> mediaMap = transMedia(list);
+
+            for (Post post : list) {
+                post.setFeaturedMedia(mediaMap.get(post.getWp_featuredmedia_id()));
+                post.setThumbnailMediaDetail(getPostFeaturedmedia(ctRecommendViewConfigProperties.getThumbnail(), post.getFeaturedMedia()));
+            }
+        } catch (Exception e) {
+            logger.error("请求wordpress-post服务错误:" + homeViewConfigProperties, e);
+            throw new Exception(e);
+        }
+
+        if (list.size() != 9 && list.size() != 6 && list.size() != 3) {
+            int needSum = 0;
+            if (list.size() / 9 >= 1)
+                needSum = 9;
+            else if (list.size() / 6 >= 1)
+                needSum = 6;
+            else if (list.size() / 3 >= 1)
+                needSum = 3;
+            else
+                needSum = list.size();
+
+            int[] randIdxs = randomArray(0, list.size() - 1, needSum);
+            List<Post> tempList = new ArrayList<Post>();
+            for (int index : randIdxs)
+                tempList.add(list.get(index));
+
+            list = tempList;
+        }
+
+        redisService.set("chain_ctRecommendView:" + cats, list, ctRecommendViewConfigProperties.getExpireTime());
+        return list;
     }
 
     /**
@@ -519,5 +568,96 @@ public class HomeServiceImpl implements HomeServiceI {
         double w = m.getWidth();
         double h = m.getHeight();
         return Double.valueOf(w / h);
+    }
+
+    /**
+     * @Title 随机指定范围内N个不重复的数
+     * @Descript 两重循环去重
+     * @param min 指定范围最小值
+     * @param max 指定范围最大值
+     * @param n 随机数个数
+     */
+    private int[] randomCommon(int min, int max, int n) {
+        if (n > (max - min + 1) || max < min) {
+            return null;
+        }
+        int[] result = new int[n];
+        int count = 0;
+        while (count < n) {
+            int num = (int) (Math.random() * (max - min)) + min;
+            boolean flag = true;
+            for (int j = 0; j < n; j++) {
+                if (num == result[j]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                result[count] = num;
+                count++;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @Title 随机指定范围内N个不重复的数
+     * @Descript 利用HashSet的特征，只能存放不同的值
+     * @param min
+     * @param max
+     * @param n
+     * @param set
+     */
+    private void randomSet(int min, int max, int n, HashSet<Integer> set) {
+        if (n > (max - min + 1) || max < min) {
+            return;
+        }
+        for (int i = 0; i < n; i++) {
+            // 调用Math.random()方法
+            int num = (int) (Math.random() * (max - min)) + min;
+            set.add(num);// 将不同的数存入HashSet中
+        }
+        int setSize = set.size();
+        // 如果存入的数小于指定生成的个数，则调用递归再生成剩余个数的随机数，如此循环，直到达到指定大小
+        if (setSize < n) {
+            randomSet(min, max, n - setSize, set);// 递归
+        }
+    }
+
+    /**
+     * @Title 随机指定范围内N个不重复的数
+     * @Descript 在初始化的无重复待选数组中随机产生一个数放入结果中， <br />
+     *           将待选数组被随机到的数，用待选数组(len-1)下标对应的数替换 然后从len-2里随机产生下一个随机数，如此类推。
+     * 
+     * @param max 指定范围最大值
+     * @param min 指定范围最小值
+     * @param n 随机数个数
+     * @return int[] 随机数结果集
+     */
+    private int[] randomArray(int min, int max, int n) {
+        int len = max - min + 1;
+
+        if (max < min || n > len) {
+            return null;
+        }
+
+        // 初始化给定范围的待选数组
+        int[] source = new int[len];
+        for (int i = min; i < min + len; i++) {
+            source[i - min] = i;
+        }
+
+        int[] result = new int[n];
+        Random rd = new Random();
+        int index = 0;
+        for (int i = 0; i < result.length; i++) {
+            // 待选数组0到(len-2)随机一个下标
+            index = Math.abs(rd.nextInt() % len--);
+            // 将随机到的数放入结果集
+            result[i] = source[index];
+            // 将待选数组中被随机到的数，用待选数组(len-1)下标对应的数替换
+            source[index] = source[len];
+        }
+        return result;
     }
 }
