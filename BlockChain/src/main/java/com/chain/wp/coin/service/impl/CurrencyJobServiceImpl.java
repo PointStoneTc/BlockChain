@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chain.base.service.BaseServiceI;
+import com.chain.base.service.MyBatisCommonServiceI;
 import com.chain.redis.service.IRedisService;
 import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
@@ -69,7 +69,7 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
   @Autowired
   private BtcMonitorRateHistoryServiceI btcMonitorRateHistoryService;
   @Autowired
-  private BaseServiceI baseService;
+  private MyBatisCommonServiceI myBatisCommonService;
 
 
   @SuppressWarnings("unchecked")
@@ -156,7 +156,7 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     for (String key : base) {
       String sql = "select t.price from (select @rownum:=@rownum+1 AS rownum, r.base_symbol, r.price from (SELECT @rownum:=0) r, cc_specific_rate r where r.base_symbol = '" + key
           + "' and r.quote_symbol = '" + id_quote + "' order by r.last_updated desc limit " + ASSETS_QUOTATION_RATEHISTORY_24H + ") t where t.rownum mod " + 15 + " = 1";
-      List<LinkedHashMap<String, Object>> list = baseService.superManagerSelect(sql);
+      List<LinkedHashMap<String, Object>> list = myBatisCommonService.superManagerSelect(sql);
       double[] rates = new double[list.size()];
       for (int i = 0; i < list.size(); i++) {
         rates[i] = (double) list.get(i).get("price");
@@ -183,7 +183,7 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
       AssetGeneral assetGeneral = new AssetGeneral();
       JSONObject job = json.getJSONObject(i);
       String flag = job.getString("name").substring(0, 1);
-      assetGeneral.setName(job.getString("name"));
+      assetGeneral.setName(job.getString("name"));http://browser.360.cn/se/event/mango/mango_skin.html?src=weishi
       assetGeneral.setSymbol(job.getString("symbol"));
       assetGeneral.setTradeVolume(new BigDecimal(job.getJSONObject("quote").getJSONObject("BTC").getString("volume_24h")));
       switch (flag) {
@@ -367,8 +367,8 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     // 2.持久或保存
     List<FloatExchange> fireTop10JsonList = setExchangeRiseFall(fireTop10Json.getJSONArray("data"), convert.split(","));
     List<FloatExchange> coldTop10JsonList = setExchangeRiseFall(coldTop10Json.getJSONArray("data"), convert.split(","));
-    floatExchangeService.insertByBatch(fireTop10JsonList);
-    floatExchangeService.insertByBatch(coldTop10JsonList);
+//    floatExchangeService.insertByBatch(fireTop10JsonList);
+//    floatExchangeService.insertByBatch(coldTop10JsonList);
     List<FloatExchange> floatExchangeList = new ArrayList<FloatExchange>();
     floatExchangeList.addAll(fireTop10JsonList);
     floatExchangeList.addAll(coldTop10JsonList);
@@ -473,51 +473,51 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     // 5.缓存数据
     BtcMonitor btcMonitor;
     Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_LINE_OHLCV);
+//
+//    long line_count = getCountForJdbc("select count(1) from cc_btc_monitor_line_history").longValue();
+//    long ohlcv_count = getCountForJdbc("select count(1) from cc_btc_monitor_ohlcv_history").longValue();
+//
+//    if (cacheObj == null) { // 缓存为空
+//      btcMonitor = new BtcMonitor();
+//      String sql;
+//      List<BtcMonitorLineHistory> lineHisList;
+//      List<BtcMonitorOhlcvHistory> ohlcvHisList;
+//
+//      // 获取line数据
+//      if (line_count > BTC_MONITOR_COLLECTION_FREQUENCY) {// 每5分钟一个点位，24小时等于12*24个点位
+//        sql =
+//            "select id, base_symbol baseSymbol, price_jpy priceJpy, price_usd priceUsd, price_eur priceEur, price_cny priceCny, last_updated lastUpdated from cc_btc_monitor_line_history limit "
+//                + (line_count - BTC_MONITOR_COLLECTION_FREQUENCY) + ", " + BTC_MONITOR_COLLECTION_FREQUENCY;
+//        lineHisList = findObjForJdbc(sql, 1, BTC_MONITOR_COLLECTION_FREQUENCY, BtcMonitorLineHistory.class);
+//      } else {
+//        lineHisList = this.getList(BtcMonitorLineHistory.class);
+//      }
+//      btcMonitor.getLine_his_queue().addAll(lineHisList);
+//
+//      // 获取ohlcv数据
+//      if (ohlcv_count > BTC_MONITOR_COLLECTION_FREQUENCY) { // 每5分钟一个点位，24小时等于12*24个点位
+//        sql = "select id, open, high, low, close, last_updated lastUpdated from cc_btc_monitor_ohlcv_history h limit " + (ohlcv_count - BTC_MONITOR_COLLECTION_FREQUENCY) + ", "
+//            + BTC_MONITOR_COLLECTION_FREQUENCY;
+//        ohlcvHisList = findObjForJdbc(sql, 1, BTC_MONITOR_COLLECTION_FREQUENCY, BtcMonitorOhlcvHistory.class);
+//      } else {
+//        ohlcvHisList = this.getList(BtcMonitorOhlcvHistory.class);
+//      }
+//      btcMonitor.getOhlcv_his_queue().addAll(ohlcvHisList);
+//    } else { // 已经存在缓存
+//      btcMonitor = (BtcMonitor) cacheObj;
+//      // 先poll，再add
+//      if (btcMonitor.getLine_his_queue().size() > BTC_MONITOR_COLLECTION_FREQUENCY) {
+//        btcMonitor.getLine_his_queue().poll();
+//      }
+//      btcMonitor.getLine_his_queue().add(lineHistoryItem);
+//
+//      if (btcMonitor.getOhlcv_his_queue().size() > BTC_MONITOR_COLLECTION_FREQUENCY) {
+//        btcMonitor.getOhlcv_his_queue().poll();
+//      }
+//      btcMonitor.getOhlcv_his_queue().add(ohlcvHistoryItem);
+//    }
 
-    long line_count = getCountForJdbc("select count(1) from cc_btc_monitor_line_history").longValue();
-    long ohlcv_count = getCountForJdbc("select count(1) from cc_btc_monitor_ohlcv_history").longValue();
-
-    if (cacheObj == null) { // 缓存为空
-      btcMonitor = new BtcMonitor();
-      String sql;
-      List<BtcMonitorLineHistory> lineHisList;
-      List<BtcMonitorOhlcvHistory> ohlcvHisList;
-
-      // 获取line数据
-      if (line_count > BTC_MONITOR_COLLECTION_FREQUENCY) {// 每5分钟一个点位，24小时等于12*24个点位
-        sql =
-            "select id, base_symbol baseSymbol, price_jpy priceJpy, price_usd priceUsd, price_eur priceEur, price_cny priceCny, last_updated lastUpdated from cc_btc_monitor_line_history limit "
-                + (line_count - BTC_MONITOR_COLLECTION_FREQUENCY) + ", " + BTC_MONITOR_COLLECTION_FREQUENCY;
-        lineHisList = findObjForJdbc(sql, 1, BTC_MONITOR_COLLECTION_FREQUENCY, BtcMonitorLineHistory.class);
-      } else {
-        lineHisList = this.getList(BtcMonitorLineHistory.class);
-      }
-      btcMonitor.getLine_his_queue().addAll(lineHisList);
-
-      // 获取ohlcv数据
-      if (ohlcv_count > BTC_MONITOR_COLLECTION_FREQUENCY) { // 每5分钟一个点位，24小时等于12*24个点位
-        sql = "select id, open, high, low, close, last_updated lastUpdated from cc_btc_monitor_ohlcv_history h limit " + (ohlcv_count - BTC_MONITOR_COLLECTION_FREQUENCY) + ", "
-            + BTC_MONITOR_COLLECTION_FREQUENCY;
-        ohlcvHisList = findObjForJdbc(sql, 1, BTC_MONITOR_COLLECTION_FREQUENCY, BtcMonitorOhlcvHistory.class);
-      } else {
-        ohlcvHisList = this.getList(BtcMonitorOhlcvHistory.class);
-      }
-      btcMonitor.getOhlcv_his_queue().addAll(ohlcvHisList);
-    } else { // 已经存在缓存
-      btcMonitor = (BtcMonitor) cacheObj;
-      // 先poll，再add
-      if (btcMonitor.getLine_his_queue().size() > BTC_MONITOR_COLLECTION_FREQUENCY) {
-        btcMonitor.getLine_his_queue().poll();
-      }
-      btcMonitor.getLine_his_queue().add(lineHistoryItem);
-
-      if (btcMonitor.getOhlcv_his_queue().size() > BTC_MONITOR_COLLECTION_FREQUENCY) {
-        btcMonitor.getOhlcv_his_queue().poll();
-      }
-      btcMonitor.getOhlcv_his_queue().add(ohlcvHistoryItem);
-    }
-
-    redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_LINE_OHLCV, btcMonitor);
+//    redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_LINE_OHLCV, btcMonitor);
     return true;
   }
 

@@ -6,18 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.chain.base.dao.BaseMapper;
-import com.chain.base.service.BaseServiceI;
+import com.chain.base.dao.MyBatisCommonMapper;
+import com.chain.base.service.MyBatisCommonServiceI;
 
-@Service("baseService")
-public class BaseServiceImpl implements BaseServiceI {
+@Service("myBatisCommonService")
+public class MyBatisCommonServiceImpl implements MyBatisCommonServiceI {
   @Autowired
-  private BaseMapper baseDao;
+  private MyBatisCommonMapper myBatisCommonDao;
 
   @Override
   public List<LinkedHashMap<String, Object>> superManagerSelect(String sql) {
-    // TODO Auto-generated method stub
-    return baseDao.superManagerSelect(sql);
+    return myBatisCommonDao.superManagerSelect(sql);
   }
-
 }

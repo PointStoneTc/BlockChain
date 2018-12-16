@@ -8,7 +8,7 @@ public interface AssetServiceI {
   int insert(Asset record);
 
   int insertSelective(Asset record);
-  
+
   Asset selectByPrimaryKey(Integer id, String symbol);
 
   int updateByPrimaryKeySelective(Asset record);
