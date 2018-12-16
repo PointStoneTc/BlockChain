@@ -54,5 +54,5 @@ public interface ExchangeMapper {
      *
      * @mbggenerated
      */
-    int updateByPrimaryKey(Exchange record);
+  int updateByPrimaryKey(Exchange record);
 }

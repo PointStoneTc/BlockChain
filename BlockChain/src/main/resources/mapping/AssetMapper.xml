@@ -117,8 +117,7 @@
 		#{symbol,jdbcType=VARCHAR}
 	</update>
 
-	<!-- 执行任意一条sql语句 -->
+	<!-- 执行任意一条sql语句 
 	<select id="superManagerSelect" parameterType="String" resultType="java.util.LinkedHashMap">
-		${value}
-	</select>
+		${value}-->
 </mapper>
