@@ -3,15 +3,15 @@ package com.chain.wp.coin.service;
 import com.chain.wp.coin.entity.Asset;
 
 public interface AssetServiceI {
-  int deleteByPrimaryKey(Integer id, String symbol);
+    int deleteByPrimaryKey(Integer id, String symbol);
 
-  int insert(Asset record);
+    int insert(Asset record);
 
-  int insertSelective(Asset record);
+    int insertSelective(Asset record);
 
-  Asset selectByPrimaryKey(Integer id, String symbol);
+    Asset selectByPrimaryKey(Integer id, String symbol);
 
-  int updateByPrimaryKeySelective(Asset record);
+    int updateByPrimaryKeySelective(Asset record);
 
-  int updateByPrimaryKey(Asset record);
+    int updateByPrimaryKey(Asset record);
 }

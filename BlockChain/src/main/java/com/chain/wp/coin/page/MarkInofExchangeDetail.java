@@ -11,28 +11,28 @@ import com.chain.wp.coin.entity.Exchange;
  *
  */
 public class MarkInofExchangeDetail implements java.io.Serializable {
-	private static final long serialVersionUID = -8496010144260101327L;
-	private Exchange exchange;
-	private String marketPair;
-	private int marketPairBaseID;
-	private String marketPairBaseSymbol;
-	private String marketPairBaseType;
-	private int marketPairQuoteID;
-	private String marketPairQuoteType;
-	private String marketPairQuoteSymbol;
-	private BigDecimal quotePirce;
-	private BigDecimal quoteVolume24hBase;
-	private BigDecimal quoteVolume24hQuote;
-	private Date lastUpdate;
-	private BigDecimal convertPrice;
-	private BigDecimal convertVolume24h;
-	private Date convertlastUpdate;
+    private static final long serialVersionUID = -8496010144260101327L;
+    private Exchange exchange;
+    private String marketPair;
+    private int marketPairBaseID;
+    private String marketPairBaseSymbol;
+    private String marketPairBaseType;
+    private int marketPairQuoteID;
+    private String marketPairQuoteType;
+    private String marketPairQuoteSymbol;
+    private BigDecimal quotePirce;
+    private BigDecimal quoteVolume24hBase;
+    private BigDecimal quoteVolume24hQuote;
+    private Date lastUpdate;
+    private BigDecimal convertPrice;
+    private BigDecimal convertVolume24h;
+    private Date convertlastUpdate;
 
-	public MarkInofExchangeDetail() {
+    public MarkInofExchangeDetail() {
 
-	}
+    }
 
-	/**
+    /**
      * @param exchange
      * @param marketPair
      * @param marketPairBaseID
@@ -73,100 +73,100 @@ public class MarkInofExchangeDetail implements java.io.Serializable {
 
 
     public Exchange getExchange() {
-		return exchange;
-	}
+        return exchange;
+    }
 
-	public void setExchange(Exchange exchange) {
-		this.exchange = exchange;
-	}
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
 
-	public String getMarketPair() {
-		return marketPair;
-	}
+    public String getMarketPair() {
+        return marketPair;
+    }
 
-	public void setMarketPair(String marketPair) {
-		this.marketPair = marketPair;
-	}
+    public void setMarketPair(String marketPair) {
+        this.marketPair = marketPair;
+    }
 
-	public int getMarketPairBaseID() {
-		return marketPairBaseID;
-	}
+    public int getMarketPairBaseID() {
+        return marketPairBaseID;
+    }
 
-	public void setMarketPairBaseID(int marketPairBaseID) {
-		this.marketPairBaseID = marketPairBaseID;
-	}
+    public void setMarketPairBaseID(int marketPairBaseID) {
+        this.marketPairBaseID = marketPairBaseID;
+    }
 
-	public String getMarketPairBaseSymbol() {
-		return marketPairBaseSymbol;
-	}
+    public String getMarketPairBaseSymbol() {
+        return marketPairBaseSymbol;
+    }
 
-	public void setMarketPairBaseSymbol(String marketPairBaseSymbol) {
-		this.marketPairBaseSymbol = marketPairBaseSymbol;
-	}
+    public void setMarketPairBaseSymbol(String marketPairBaseSymbol) {
+        this.marketPairBaseSymbol = marketPairBaseSymbol;
+    }
 
-	public String getMarketPairBaseType() {
-		return marketPairBaseType;
-	}
+    public String getMarketPairBaseType() {
+        return marketPairBaseType;
+    }
 
-	public void setMarketPairBaseType(String marketPairBaseType) {
-		this.marketPairBaseType = marketPairBaseType;
-	}
+    public void setMarketPairBaseType(String marketPairBaseType) {
+        this.marketPairBaseType = marketPairBaseType;
+    }
 
-	public int getMarketPairQuoteID() {
-		return marketPairQuoteID;
-	}
+    public int getMarketPairQuoteID() {
+        return marketPairQuoteID;
+    }
 
-	public void setMarketPairQuoteID(int marketPairQuoteID) {
-		this.marketPairQuoteID = marketPairQuoteID;
-	}
+    public void setMarketPairQuoteID(int marketPairQuoteID) {
+        this.marketPairQuoteID = marketPairQuoteID;
+    }
 
-	public String getMarketPairQuoteType() {
-		return marketPairQuoteType;
-	}
+    public String getMarketPairQuoteType() {
+        return marketPairQuoteType;
+    }
 
-	public void setMarketPairQuoteType(String marketPairQuoteType) {
-		this.marketPairQuoteType = marketPairQuoteType;
-	}
+    public void setMarketPairQuoteType(String marketPairQuoteType) {
+        this.marketPairQuoteType = marketPairQuoteType;
+    }
 
-	public String getMarketPairQuoteSymbol() {
-		return marketPairQuoteSymbol;
-	}
+    public String getMarketPairQuoteSymbol() {
+        return marketPairQuoteSymbol;
+    }
 
-	public void setMarketPairQuoteSymbol(String marketPairQuoteSymbol) {
-		this.marketPairQuoteSymbol = marketPairQuoteSymbol;
-	}
+    public void setMarketPairQuoteSymbol(String marketPairQuoteSymbol) {
+        this.marketPairQuoteSymbol = marketPairQuoteSymbol;
+    }
 
-	public BigDecimal getQuotePirce() {
-		return quotePirce;
-	}
+    public BigDecimal getQuotePirce() {
+        return quotePirce;
+    }
 
-	public void setQuotePirce(BigDecimal quotePirce) {
-		this.quotePirce = quotePirce;
-	}
+    public void setQuotePirce(BigDecimal quotePirce) {
+        this.quotePirce = quotePirce;
+    }
 
-	public BigDecimal getQuoteVolume24hBase() {
-		return quoteVolume24hBase;
-	}
+    public BigDecimal getQuoteVolume24hBase() {
+        return quoteVolume24hBase;
+    }
 
-	public void setQuoteVolume24hBase(BigDecimal quoteVolume24hBase) {
-		this.quoteVolume24hBase = quoteVolume24hBase;
-	}
+    public void setQuoteVolume24hBase(BigDecimal quoteVolume24hBase) {
+        this.quoteVolume24hBase = quoteVolume24hBase;
+    }
 
-	public BigDecimal getQuoteVolume24hQuote() {
-		return quoteVolume24hQuote;
-	}
+    public BigDecimal getQuoteVolume24hQuote() {
+        return quoteVolume24hQuote;
+    }
 
-	public void setQuoteVolume24hQuote(BigDecimal quoteVolume24hQuote) {
-		this.quoteVolume24hQuote = quoteVolume24hQuote;
-	}
+    public void setQuoteVolume24hQuote(BigDecimal quoteVolume24hQuote) {
+        this.quoteVolume24hQuote = quoteVolume24hQuote;
+    }
 
-	public Date getLastUpdate() {
-		return lastUpdate;
-	}
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
 
-	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
     public BigDecimal getConvertPrice() {
         return convertPrice;
@@ -191,6 +191,7 @@ public class MarkInofExchangeDetail implements java.io.Serializable {
     public void setConvertlastUpdate(Date convertlastUpdate) {
         this.convertlastUpdate = convertlastUpdate;
     }
+
     public String getPriceDouble() {
         return quotePirce.toPlainString();
     }

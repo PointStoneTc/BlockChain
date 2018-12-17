@@ -11,6 +11,7 @@ public class CoinConfigProperties {
     private AssetsQuotationRateCurrent assetsQuotationRateCurrent;
     private TopFloatingExchange topFloatingExchange;
     private MarkInfoExchangeJob markInfoExchangeJob;
+    private MarketInfoExchange marketInfoExchange;
     private BtcMonitorLineOHLCV btcMonitorLineOHLCV;
     private BtcMonitorRate btcMonitorRate;
     private AssetsGeneralJob assetsGeneralJob;
@@ -61,6 +62,14 @@ public class CoinConfigProperties {
 
     public void setMarkInfoExchangeJob(MarkInfoExchangeJob markInfoExchangeJob) {
         this.markInfoExchangeJob = markInfoExchangeJob;
+    }
+
+    public MarketInfoExchange getMarketInfoExchange() {
+        return marketInfoExchange;
+    }
+
+    public void setMarketInfoExchange(MarketInfoExchange marketInfoExchange) {
+        this.marketInfoExchange = marketInfoExchange;
     }
 
     public BtcMonitorLineOHLCV getBtcMonitorLineOHLCV() {
@@ -236,6 +245,37 @@ public class CoinConfigProperties {
         public void setLimit(int limit) {
             this.limit = limit;
         }
+    }
+
+    public static class MarketInfoExchange {
+        private String url;
+        private String convert;
+        private int limit;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getConvert() {
+            return convert;
+        }
+
+        public void setConvert(String convert) {
+            this.convert = convert;
+        }
+
+        public int getLimit() {
+            return limit;
+        }
+
+        public void setLimit(int limit) {
+            this.limit = limit;
+        }
+
     }
 
     /**

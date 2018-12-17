@@ -7,11 +7,11 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MyBatisCommonMapper {
-  /**
-   * 执行任何一条sql
-   * 
-   * @param sql
-   * @return
-   */
-  List<LinkedHashMap<String, Object>> superManagerSelect(String sql);
+    /**
+     * 执行任何一条sql
+     * 
+     * @param sql
+     * @return
+     */
+    List<LinkedHashMap<String, Object>> superManagerSelect(String sql);
 }

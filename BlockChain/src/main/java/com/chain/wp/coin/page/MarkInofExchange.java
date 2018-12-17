@@ -72,12 +72,12 @@ public class MarkInofExchange implements java.io.Serializable {
         this.exchangeList = exchangeList;
     }
 
-	public int getStart() {
-		return start;
-	}
+    public int getStart() {
+        return start;
+    }
 
-	public void setStart(int start) {
-		this.start = start;
-	}
-    
+    public void setStart(int start) {
+        this.start = start;
+    }
+
 }

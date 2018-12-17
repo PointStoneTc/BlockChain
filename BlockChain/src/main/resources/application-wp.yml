@@ -102,7 +102,7 @@ coin:
       convert: BTC
       limit: 500
     #setMarketInfoExchange所用到的参数
-    marketInfoExchange:
+    market-info-exchange:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest
       convert: BTC
       limit: 501

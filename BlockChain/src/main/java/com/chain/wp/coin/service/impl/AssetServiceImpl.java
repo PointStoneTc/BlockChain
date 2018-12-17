@@ -9,37 +9,37 @@ import com.chain.wp.coin.service.AssetServiceI;
 
 @Service("assetService")
 public class AssetServiceImpl implements AssetServiceI {
-  @Autowired
-  private AssetMapper assetDao;
+    @Autowired
+    private AssetMapper assetDao;
 
-  @Override
-  public int deleteByPrimaryKey(Integer id, String symbol) {
-    return assetDao.deleteByPrimaryKey(id, symbol);
-  }
+    @Override
+    public int deleteByPrimaryKey(Integer id, String symbol) {
+        return assetDao.deleteByPrimaryKey(id, symbol);
+    }
 
-  @Override
-  public int insert(Asset record) {
-    return assetDao.insert(record);
-  }
+    @Override
+    public int insert(Asset record) {
+        return assetDao.insert(record);
+    }
 
-  @Override
-  public int insertSelective(Asset record) {
-    return assetDao.insertSelective(record);
-  }
+    @Override
+    public int insertSelective(Asset record) {
+        return assetDao.insertSelective(record);
+    }
 
-  @Override
-  public Asset selectByPrimaryKey(Integer id, String symbol) {
-    return assetDao.selectByPrimaryKey(id, symbol);
-  }
+    @Override
+    public Asset selectByPrimaryKey(Integer id, String symbol) {
+        return assetDao.selectByPrimaryKey(id, symbol);
+    }
 
-  @Override
-  public int updateByPrimaryKeySelective(Asset record) {
-    return assetDao.updateByPrimaryKeySelective(record);
-  }
+    @Override
+    public int updateByPrimaryKeySelective(Asset record) {
+        return assetDao.updateByPrimaryKeySelective(record);
+    }
 
-  @Override
-  public int updateByPrimaryKey(Asset record) {
-    return assetDao.updateByPrimaryKey(record);
-  }
+    @Override
+    public int updateByPrimaryKey(Asset record) {
+        return assetDao.updateByPrimaryKey(record);
+    }
 
 }

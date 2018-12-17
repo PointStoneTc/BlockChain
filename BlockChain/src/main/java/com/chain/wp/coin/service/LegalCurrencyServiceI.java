@@ -3,15 +3,15 @@ package com.chain.wp.coin.service;
 import com.chain.wp.coin.entity.LegalCurrency;
 
 public interface LegalCurrencyServiceI {
-  int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer id);
 
-  int insert(LegalCurrency record);
+    int insert(LegalCurrency record);
 
-  int insertSelective(LegalCurrency record);
+    int insertSelective(LegalCurrency record);
 
-  LegalCurrency selectByPrimaryKey(Integer id);
+    LegalCurrency selectByPrimaryKey(Integer id);
 
-  int updateByPrimaryKeySelective(LegalCurrency record);
+    int updateByPrimaryKeySelective(LegalCurrency record);
 
-  int updateByPrimaryKey(LegalCurrency record);
+    int updateByPrimaryKey(LegalCurrency record);
 }

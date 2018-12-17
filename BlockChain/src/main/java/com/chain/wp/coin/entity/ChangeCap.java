@@ -5,6 +5,7 @@ import java.util.Date;
 
 /**
  * 资产变化pojo类，应用在交易所浮动API数据抓取功能中...
+ * 
  * @author zhaoqi
  *
  */

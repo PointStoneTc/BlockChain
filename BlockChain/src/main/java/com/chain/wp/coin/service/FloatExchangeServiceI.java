@@ -5,17 +5,17 @@ import java.util.List;
 import com.chain.wp.coin.entity.FloatExchange;
 
 public interface FloatExchangeServiceI {
-  int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(String id);
 
-  int insert(FloatExchange record);
+    int insert(FloatExchange record);
 
-  int insertSelective(FloatExchange record);
+    int insertSelective(FloatExchange record);
 
-  FloatExchange selectByPrimaryKey(String id);
+    FloatExchange selectByPrimaryKey(String id);
 
-  int updateByPrimaryKeySelective(FloatExchange record);
+    int updateByPrimaryKeySelective(FloatExchange record);
 
-  int updateByPrimaryKey(FloatExchange record);
+    int updateByPrimaryKey(FloatExchange record);
 
-  void insertByBatch(List<FloatExchange> floatExchangeList);
+    void insertByBatch(List<FloatExchange> floatExchangeList);
 }

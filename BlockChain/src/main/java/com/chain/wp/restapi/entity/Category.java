@@ -10,14 +10,14 @@ import java.io.Serializable;
  */
 public class Category implements Serializable {
     private static final long serialVersionUID = 4010828424235349079L;
-    
+
     private int id;
     private int count;
     private String description;
     private String name;
     private String slug;
     private int parent;
-    
+
     public Category() {}
 
     public int getId() {
@@ -67,5 +67,5 @@ public class Category implements Serializable {
     public void setParent(int parent) {
         this.parent = parent;
     }
-    
+
 }

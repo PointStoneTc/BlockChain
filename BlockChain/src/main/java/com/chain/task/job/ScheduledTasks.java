@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 import com.chain.wp.restapi.service.HomeServiceI;
 
 @Component
-//@EnableScheduling
+// @EnableScheduling
 public class ScheduledTasks {
     @Autowired
     private HomeServiceI homeService;
 
-   // @Scheduled(cron = "0 0/5 * * * ?")
+    // @Scheduled(cron = "0 0/5 * * * ?")
     public void getWpHomeView() {
         System.out.println("Scheduling Tasks Examples By Cron: The time is now " + dateFormat().format(new Date()));
         try {

@@ -5,6 +5,7 @@ import java.util.Date;
 
 /**
  * 货币资产变化情况POJO类，应用于最新的货币报价信息抓取功能中....
+ * 
  * @author zhaoqi
  *
  */
