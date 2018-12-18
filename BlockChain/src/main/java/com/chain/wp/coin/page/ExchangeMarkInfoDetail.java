@@ -151,8 +151,4 @@ public class ExchangeMarkInfoDetail implements java.io.Serializable {
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-
-    public String getPriceDouble() {
-        return quotePirce.toPlainString();
-    }
 }

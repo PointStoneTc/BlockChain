@@ -21,10 +21,10 @@
 		t.TRIGGER_STATE AS
 		triggerState
 		FROM
-		qrtz_job_details jd
-		JOIN qrtz_triggers t
+		QRTZ_JOB_DETAILS jd
+		JOIN QRTZ_TRIGGERS t
 		JOIN
-		qrtz_cron_triggers ct ON jd.JOB_NAME = t.JOB_NAME
+		QRTZ_CRON_TRIGGERS ct ON jd.JOB_NAME = t.JOB_NAME
 		AND t.TRIGGER_NAME =
 		ct.TRIGGER_NAME
 		AND t.TRIGGER_GROUP = ct.TRIGGER_GROUP
@@ -50,10 +50,10 @@
 		t.TRIGGER_STATE AS
 		triggerState
 		FROM
-		qrtz_job_details jd
-		JOIN qrtz_triggers t
+		QRTZ_JOB_DETAILS jd
+		JOIN QRTZ_TRIGGERS t
 		JOIN
-		qrtz_cron_triggers ct ON jd.JOB_NAME = t.JOB_NAME
+		QRTZ_CRON_TRIGGERS ct ON jd.JOB_NAME = t.JOB_NAME
 		AND t.TRIGGER_NAME =
 		ct.TRIGGER_NAME
 		AND t.TRIGGER_GROUP = ct.TRIGGER_GROUP
