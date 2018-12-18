@@ -45,13 +45,8 @@ public class BtcMonitorOhlcvHistoryServiceImpl implements BtcMonitorOhlcvHistory
     }
 
     @Override
-    public List<BtcMonitorOhlcvHistory> selectAll() {
-        return btcMonitorOhlcvHistoryDao.selectAll();
-    }
-
-    @Override
-    public List<BtcMonitorOhlcvHistory> select288Points(Integer start, Integer end) {
-        return btcMonitorOhlcvHistoryDao.select288Points(start, end);
+    public List<BtcMonitorOhlcvHistory> selectAll(Integer page, Integer size) {
+        return btcMonitorOhlcvHistoryDao.selectAll(page, size);
     }
 
 }

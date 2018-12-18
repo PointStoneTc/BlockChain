@@ -16,8 +16,7 @@ public interface BtcMonitorOhlcvHistoryServiceI {
     int updateByPrimaryKeySelective(BtcMonitorOhlcvHistory record);
 
     int updateByPrimaryKey(BtcMonitorOhlcvHistory record);
-    
-    List<BtcMonitorOhlcvHistory> selectAll();
-    
-    List<BtcMonitorOhlcvHistory> select288Points(Integer start, Integer end);
+
+    List<BtcMonitorOhlcvHistory> selectAll(Integer page, Integer size);
+
 }

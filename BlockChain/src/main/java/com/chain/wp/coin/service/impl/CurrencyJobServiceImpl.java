@@ -19,6 +19,7 @@ import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
 import com.chain.wp.coin.config.CoinConfigProperties;
 import com.chain.wp.coin.config.CoinConstant;
+import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorLineHistory;
 import com.chain.wp.coin.entity.BtcMonitorOhlcvHistory;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
@@ -168,165 +169,61 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         String convert = coinConfigProperties.getAssetsGeneralJob().getConvert();
         String sort = coinConfigProperties.getAssetsGeneralJob().getSort();
         String sort_dir = coinConfigProperties.getAssetsGeneralJob().getSort_dir();
-        JSONObject object = JSONObject.fromObject(setGetHasHeader(url + "?limit=" + limit + "&convert=" + convert + "&sort=" + sort + "&sort_dir=" + sort_dir));
-        JSONArray json = JSONArray.fromObject(object.get("data"));
-        Map<String, List<AssetGeneral>> assetGeneralMap = new LinkedHashMap<String, List<AssetGeneral>>();
-        List<AssetGeneral> list = new ArrayList<AssetGeneral>();
-        for (int i = 0; i < json.size(); i++) {
-            AssetGeneral assetGeneral = new AssetGeneral();
-            JSONObject job = json.getJSONObject(i);
-            String flag = job.getString("name").substring(0, 1);
-            assetGeneral.setName(job.getString("name"));
-            assetGeneral.setSymbol(job.getString("symbol"));
-            assetGeneral.setTradeVolume(new BigDecimal(job.getJSONObject("quote").getJSONObject("BTC").getString("volume_24h")));
-            switch (flag) {
-            case "A":
-                list.add(assetGeneral);
-                assetGeneralMap.put("A", list);
-                break;
-            case "B":
-                list.add(assetGeneral);
-                assetGeneralMap.put("B", list);
-                break;
-            case "C":
-                list.add(assetGeneral);
-                assetGeneralMap.put("C", list);
-                break;
-            case "D":
-                list.add(assetGeneral);
-                assetGeneralMap.put("D", list);
-                break;
-            case "E":
-                list.add(assetGeneral);
-                assetGeneralMap.put("E", list);
-                break;
-            case "F":
-                list.add(assetGeneral);
-                assetGeneralMap.put("F", list);
-                break;
-            case "G":
-                list.add(assetGeneral);
-                assetGeneralMap.put("G", list);
-                break;
-            case "H":
-                list.add(assetGeneral);
-                assetGeneralMap.put("H", list);
-                break;
-            case "I":
-                list.add(assetGeneral);
-                assetGeneralMap.put("I", list);
-                break;
-            case "J":
-                list.add(assetGeneral);
-                assetGeneralMap.put("J", list);
-                break;
-            case "K":
-                list.add(assetGeneral);
-                assetGeneralMap.put("K", list);
-                break;
-            case "L":
-                list.add(assetGeneral);
-                assetGeneralMap.put("L", list);
-                break;
-            case "M":
-                list.add(assetGeneral);
-                assetGeneralMap.put("M", list);
-                break;
-            case "N":
-                list.add(assetGeneral);
-                assetGeneralMap.put("N", list);
-                break;
-            case "O":
-                list.add(assetGeneral);
-                assetGeneralMap.put("O", list);
-                break;
-            case "P":
-                list.add(assetGeneral);
-                assetGeneralMap.put("P", list);
-                break;
-            case "Q":
-                list.add(assetGeneral);
-                assetGeneralMap.put("Q", list);
-                break;
-            case "R":
-                list.add(assetGeneral);
-                assetGeneralMap.put("R", list);
-                break;
-            case "S":
-                list.add(assetGeneral);
-                assetGeneralMap.put("S", list);
-                break;
-            case "T":
-                list.add(assetGeneral);
-                assetGeneralMap.put("T", list);
-                break;
-            case "U":
-                list.add(assetGeneral);
-                assetGeneralMap.put("U", list);
-                break;
-            case "V":
-                list.add(assetGeneral);
-                assetGeneralMap.put("V", list);
-                break;
-            case "W":
-                list.add(assetGeneral);
-                assetGeneralMap.put("W", list);
-                break;
-            case "X":
-                list.add(assetGeneral);
-                assetGeneralMap.put("X", list);
-                break;
-            case "Y":
-                list.add(assetGeneral);
-                assetGeneralMap.put("Y", list);
-                break;
-            case "Z":
-                list.add(assetGeneral);
-                assetGeneralMap.put("Z", list);
-                break;
-            case "0":
-                list.add(assetGeneral);
-                assetGeneralMap.put("0", list);
-                break;
-            case "1":
-                list.add(assetGeneral);
-                assetGeneralMap.put("1", list);
-                break;
-            case "2":
-                list.add(assetGeneral);
-                assetGeneralMap.put("2", list);
-                break;
-            case "3":
-                list.add(assetGeneral);
-                assetGeneralMap.put("3", list);
-                break;
-            case "4":
-                list.add(assetGeneral);
-                assetGeneralMap.put("4", list);
-                break;
-            case "5":
-                list.add(assetGeneral);
-                assetGeneralMap.put("5", list);
-                break;
-            case "6":
-                list.add(assetGeneral);
-                assetGeneralMap.put("6", list);
-                break;
-            case "7":
-                list.add(assetGeneral);
-                assetGeneralMap.put("7", list);
-                break;
-            case "8":
-                list.add(assetGeneral);
-                assetGeneralMap.put("8", list);
-                break;
-            case "9":
-                list.add(assetGeneral);
-                assetGeneralMap.put("9", list);
-                break;
-            }
+
+        // 1.初始化数组，数组倒数第二个存不符合命名规范的货币，最后一个存所有
+        String indexc = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        List<List<Asset>> list = new ArrayList<List<Asset>>();
+        for (int i = 0; i < indexc.length() + 2; i++) {
+            List<Asset> temp = new ArrayList<Asset>();
+            list.add(temp);
         }
-        redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL, assetGeneralMap);
+        list.add(new ArrayList<Asset>()); // 存储其他名字的货币
+
+        int start = 1;
+        while (true) {
+            System.out.println("start ======= : " + start);
+            JSONArray json = JSONObject.fromObject(setGetHasHeader(url + "?start=" + start + "&limit=" + limit + "&convert=" + convert + "&sort=" + sort + "&sort_dir=" + sort_dir))
+                    .getJSONArray("data");
+            if (json.size() == 0)
+                break;
+
+            for (int i = 0; i < json.size(); i++) {
+                JSONObject item = json.getJSONObject(i);
+                Asset asset = new Asset();
+                asset.setCid(Integer.valueOf(item.getInt("id")));
+                asset.setName(item.getString("name"));
+                asset.setSymbol(item.getString("symbol"));
+                asset.setSlug(item.getString("slug"));
+                asset.setCirculatingSupply(item.getString("circulating_supply"));
+                asset.setTotalSupply(item.getString("total_supply"));
+                asset.setMaxSupply(item.getString("max_supply"));
+                asset.setNumMarketPairs(item.getString("num_market_pairs"));
+                JSONObject convertJson = item.getJSONObject("quote").getJSONObject(convert);
+                asset.setQuotePrice(convertJson.getString("price"));
+                asset.setQuoteVolume24h(convertJson.getString("volume_24h"));
+                asset.setQuotePercentChange1h(convertJson.getString("percent_change_1h"));
+                asset.setQuotePercentChange24h(convertJson.getString("percent_change_24h"));
+                asset.setQuotePercentChange7d(convertJson.getString("percent_change_7d"));
+                asset.setQuoteMarketCap(convertJson.getString("market_cap"));
+                asset.setLastUpdated((DateUtils.parseDate(convertJson.getString("last_updated"), DateUtils.datetimeISO8601Format)));
+
+                int idx = indexc.indexOf(asset.getSymbol().toUpperCase().charAt(0));
+                if (idx < 0) {
+                    list.get(list.size() - 2).add(asset);
+                } else {
+                    list.get(idx).add(asset);
+                }
+                list.get(list.size() - 1).add(asset);
+            }
+
+            start += limit;
+        }
+        for (int i = 0; i < indexc.length(); i++) {
+            if (list.get(i).size() > 0)
+                redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_" + indexc.charAt(i), list.get(i));
+        }
+        redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_OTHER", list.get(list.size() - 2));
+        redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_ALL", list.get(list.size() - 1));
         return true;
     }
 
@@ -469,29 +366,24 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
 
         if (cacheObj == null) { // 缓存为空
             btcMonitor = new BtcMonitor();
-            String sql;
             List<BtcMonitorLineHistory> lineHisList;
             List<BtcMonitorOhlcvHistory> ohlcvHisList;
 
             // 获取line数据
             if (line_count > BTC_MONITOR_COLLECTION_FREQUENCY) {// 每5分钟一个点位，24小时等于12*24个点位
-                sql = "select id, base_symbol baseSymbol, price_jpy priceJpy, price_usd priceUsd, price_eur priceEur, price_cny priceCny, last_updated lastUpdated from cc_btc_monitor_line_history limit "
-                        + (line_count - BTC_MONITOR_COLLECTION_FREQUENCY) + ", " + BTC_MONITOR_COLLECTION_FREQUENCY;
-                lineHisList = btcMonitorLineHistoryService.select288Points(Integer.valueOf((int) (line_count - BTC_MONITOR_COLLECTION_FREQUENCY)),
+                lineHisList = btcMonitorLineHistoryService.selectAll(Integer.valueOf((int) (line_count - BTC_MONITOR_COLLECTION_FREQUENCY)),
                         Integer.valueOf(BTC_MONITOR_COLLECTION_FREQUENCY));
             } else {
-                lineHisList = btcMonitorLineHistoryService.selectAll();
+                lineHisList = btcMonitorLineHistoryService.selectAll(null, null);
             }
             btcMonitor.getLine_his_queue().addAll(lineHisList);
 
             // 获取ohlcv数据
             if (ohlcv_count > BTC_MONITOR_COLLECTION_FREQUENCY) { // 每5分钟一个点位，24小时等于12*24个点位
-                sql = "select id, open, high, low, close, last_updated lastUpdated from cc_btc_monitor_ohlcv_history h limit " + (ohlcv_count - BTC_MONITOR_COLLECTION_FREQUENCY)
-                        + ", " + BTC_MONITOR_COLLECTION_FREQUENCY;
-                ohlcvHisList = btcMonitorOhlcvHistoryService.select288Points(Integer.valueOf((int) (ohlcv_count - BTC_MONITOR_COLLECTION_FREQUENCY)),
+                ohlcvHisList = btcMonitorOhlcvHistoryService.selectAll(Integer.valueOf((int) (ohlcv_count - BTC_MONITOR_COLLECTION_FREQUENCY)),
                         Integer.valueOf(BTC_MONITOR_COLLECTION_FREQUENCY));
             } else {
-                ohlcvHisList = btcMonitorOhlcvHistoryService.selectAll();
+                ohlcvHisList = btcMonitorOhlcvHistoryService.selectAll(null, null);
             }
             btcMonitor.getOhlcv_his_queue().addAll(ohlcvHisList);
         } else { // 已经存在缓存
@@ -539,7 +431,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         rate.setCreateDate(new Date());
 
         btcMonitorRateHistoryService.insert(rate);
-        redisService.remove(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_RATE);
         redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_RATE, rate);
         return true;
     }

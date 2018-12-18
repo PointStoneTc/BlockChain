@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.chain.wp.coin.config.CoinConfigProperties;
+import com.chain.wp.coin.entity.Asset;
+import com.chain.wp.coin.entity.BtcMonitorRateHistory;
 import com.chain.wp.coin.page.AssetGeneral;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
@@ -92,9 +94,9 @@ public class CurrencyApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/btcMonitorRate", method = RequestMethod.GET)
-    public BtcMonitor btcMonitorRate() throws Exception {
-        BtcMonitor btcMonitor = currencyApiService.btcMonitorLine_OHLCV();
-        return btcMonitor;
+    public BtcMonitorRateHistory btcMonitorRate() throws Exception {
+        BtcMonitorRateHistory btcMonitorRate = currencyApiService.btcMonitorRate();
+        return btcMonitorRate;
     }
 
     /**
@@ -115,8 +117,8 @@ public class CurrencyApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/legalCurrencyTrend", method = RequestMethod.GET)
-    public String legalCurrencyTrend() throws Exception {
-        return "true";
+    public boolean legalCurrencyTrend() throws Exception {
+        return true;
     }
 
     /**
@@ -172,8 +174,8 @@ public class CurrencyApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/assetsGeneral", method = RequestMethod.GET)
-    public List<AssetGeneral> assetsGeneral() throws Exception {
-        List<AssetGeneral> list = currencyApiService.assetsGeneral();
+    public List<Asset> assetsGeneral(@RequestParam(value = "name", required = true) String name) throws Exception {
+        List<Asset> list = currencyApiService.assetsGeneral(name);
         return list;
     }
 
@@ -193,6 +195,18 @@ public class CurrencyApiController {
             case 3:
                 // 3.测试更新浮动大的前10位交易所信息缓存
                 currencyJobService.setTopFloatingExchange_Job();
+                break;
+            case 4:
+                // 4.测试更新BTC监视器固定法币汇率和OHLCV的历史信息缓存
+                currencyJobService.setBtcMonitorLine_OHLCV_Job();
+                break;
+            case 5:
+                // 5.测试更新BTC监视器的费率信息缓存
+                currencyJobService.setBtcMonitorRate_Job();
+                break;
+            case 6:
+                // 6.测试更新资产概要信息缓存
+                currencyJobService.setAssetsGeneral_Job();
                 break;
             default:
                 break;

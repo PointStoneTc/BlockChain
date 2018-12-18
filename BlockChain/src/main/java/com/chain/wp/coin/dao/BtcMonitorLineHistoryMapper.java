@@ -3,7 +3,6 @@ package com.chain.wp.coin.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import com.chain.wp.coin.entity.BtcMonitorLineHistory;
@@ -24,7 +23,6 @@ public interface BtcMonitorLineHistoryMapper {
      *
      * @mbggenerated
      */
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(BtcMonitorLineHistory record);
 
     /**
@@ -59,7 +57,11 @@ public interface BtcMonitorLineHistoryMapper {
      */
     int updateByPrimaryKey(BtcMonitorLineHistory record);
 
-    List<BtcMonitorLineHistory> selectAll();
-
-    List<BtcMonitorLineHistory> select288Points(@Param("start") Integer start, @Param("end") Integer end);
+    /**
+     * 
+     * @param page
+     * @param size
+     * @return
+     */
+    List<BtcMonitorLineHistory> selectAll(@Param("page") Integer page, @Param("size") Integer size);
 }

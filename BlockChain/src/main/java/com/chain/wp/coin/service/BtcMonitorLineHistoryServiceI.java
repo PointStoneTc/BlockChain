@@ -17,7 +17,5 @@ public interface BtcMonitorLineHistoryServiceI {
 
     int updateByPrimaryKey(BtcMonitorLineHistory record);
 
-    List<BtcMonitorLineHistory> selectAll();
-
-    List<BtcMonitorLineHistory> select288Points(Integer start, Integer end);
+    List<BtcMonitorLineHistory> selectAll(Integer page, Integer size);
 }

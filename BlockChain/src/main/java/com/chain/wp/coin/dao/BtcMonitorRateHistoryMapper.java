@@ -1,7 +1,6 @@
 package com.chain.wp.coin.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
 
@@ -21,7 +20,6 @@ public interface BtcMonitorRateHistoryMapper {
      *
      * @mbggenerated
      */
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(BtcMonitorRateHistory record);
 
     /**

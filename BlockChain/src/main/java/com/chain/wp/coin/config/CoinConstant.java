@@ -4,7 +4,7 @@ public abstract class CoinConstant {
     /**
      * 数字加密货币Aip缓存[临时缓存]
      */
-    public final static String CURRENCY_API = "ccCurrencyApi";
+    public final static String CURRENCY_API = "coin";
 
     /** assets交易费率变化的信息缓存key */
     public final static String ASSETS_QUOTATION_RATE = "assets_quotation_rate";

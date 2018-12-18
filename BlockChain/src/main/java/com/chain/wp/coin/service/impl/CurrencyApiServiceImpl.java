@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +18,9 @@ import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
 import com.chain.wp.coin.config.CoinConfigProperties;
 import com.chain.wp.coin.config.CoinConstant;
+import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
 import com.chain.wp.coin.entity.Exchange;
-import com.chain.wp.coin.page.AssetGeneral;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
@@ -104,15 +103,13 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<AssetGeneral> assetsGeneral() throws Exception {
-        LinkedHashMap<String, List<AssetGeneral>> listMap =
-                (LinkedHashMap<String, List<AssetGeneral>>) redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL);
-        List<AssetGeneral> list = new ArrayList<AssetGeneral>();
-        for (String key : listMap.keySet()) {
-            // System.out.println(listMap.get(key));
-            list.addAll(listMap.get(key));
+    public List<Asset> assetsGeneral(String name) throws Exception {
+        Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_" + name);
+        if (cacheObj == null) { // 缓存为空
+            return null;
+        } else { // 已经存在缓存
+            return (ArrayList<Asset>) cacheObj;
         }
-        return list;
     }
 
     @Override
@@ -156,9 +153,9 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
 
         ExchangeMarkInfo markInfo = new ExchangeMarkInfo();
         if (mustQuery) {
-            String url = coinConfigProperties.getMarketInfoExchange().getUrl();
-            String convert = coinConfigProperties.getMarketInfoExchange().getConvert();
-            int limit = coinConfigProperties.getMarketInfoExchange().getLimit();
+            String url = coinConfigProperties.getMarkInfoExchangeJob().getUrl();
+            String convert = coinConfigProperties.getMarkInfoExchangeJob().getConvert();
+            int limit = coinConfigProperties.getMarkInfoExchangeJob().getLimit();
             JSONObject object = JSONObject.fromObject(setGetHasHeader(url + "?id=" + id + "&convert=" + convert + "&limit=" + limit)).getJSONObject("data");
             JSONArray json = object.getJSONArray("market_pairs");
             Exchange exchange = new Exchange();

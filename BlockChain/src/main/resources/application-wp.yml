@@ -125,7 +125,7 @@ coin:
     #setAssetsGeneral_Job所用到的参数
     assetsGeneral_Job:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
-      convert: BTC
-      limit: 3000
-      sort: volume_24h
-      sort_dir: desc
+      convert: JPY
+      limit: 500
+      sort: price
+      sort_dir: asc

@@ -169,9 +169,6 @@
 
 	<!-- 批量新增 -->
 	<insert id="insertByBatch" parameterType="java.util.List">
-		<selectKey keyProperty="id" resultType="String" order="BEFORE">
-			select replace(uuid(),'-','') from dual
-		</selectKey>
 		insert into cc_float_exchange (id, exchange_id, name,
 		slug, num_market_pairs, b_volume_24h,
 		q_volume_24h, last_updated,
@@ -179,7 +176,7 @@
 		update_date)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.id,jdbcType=VARCHAR},
+			((SELECT REPLACE(UUID(), '-', '') AS id),
 			#{item.exchangeId,jdbcType=INTEGER}, #{item.name,jdbcType=VARCHAR},
 			#{item.slug,jdbcType=VARCHAR},
 			#{item.numMarketPairs,jdbcType=INTEGER}, #{item.bVolume24h,jdbcType=DOUBLE},

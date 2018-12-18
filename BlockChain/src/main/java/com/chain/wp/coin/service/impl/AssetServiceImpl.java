@@ -13,8 +13,8 @@ public class AssetServiceImpl implements AssetServiceI {
     private AssetMapper assetDao;
 
     @Override
-    public int deleteByPrimaryKey(Integer id, String symbol) {
-        return assetDao.deleteByPrimaryKey(id, symbol);
+    public int deleteByPrimaryKey(Integer id) {
+        return assetDao.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -28,8 +28,8 @@ public class AssetServiceImpl implements AssetServiceI {
     }
 
     @Override
-    public Asset selectByPrimaryKey(Integer id, String symbol) {
-        return assetDao.selectByPrimaryKey(id, symbol);
+    public Asset selectByPrimaryKey(Integer id) {
+        return assetDao.selectByPrimaryKey(id);
     }
 
     @Override

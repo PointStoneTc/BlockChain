@@ -45,13 +45,8 @@ public class BtcMonitorLineHistoryServiceImpl implements BtcMonitorLineHistorySe
     }
 
     @Override
-    public List<BtcMonitorLineHistory> selectAll() {
-        return btcMonitorLineHistoryDao.selectAll();
-    }
-
-    @Override
-    public List<BtcMonitorLineHistory> select288Points(Integer start, Integer end) {
-        return btcMonitorLineHistoryDao.select288Points(start, end);
+    public List<BtcMonitorLineHistory> selectAll(Integer page, Integer size) {
+        return btcMonitorLineHistoryDao.selectAll(page, size);
     }
 
 }

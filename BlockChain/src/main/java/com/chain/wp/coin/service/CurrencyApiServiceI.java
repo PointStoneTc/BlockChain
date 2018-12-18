@@ -2,8 +2,8 @@ package com.chain.wp.coin.service;
 
 import java.util.List;
 
+import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
-import com.chain.wp.coin.page.AssetGeneral;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
@@ -84,10 +84,11 @@ public interface CurrencyApiServiceI {
     /**
      * 资产概要信息
      * 
+     * @param name
      * @return
      * @throws Exception
      */
-    public List<AssetGeneral> assetsGeneral() throws Exception;
+    public List<Asset> assetsGeneral(String name) throws Exception;
 
     /**
      * 以交易所为单位所有的市场信息
