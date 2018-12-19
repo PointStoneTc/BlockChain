@@ -103,13 +103,25 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Asset> assetsGeneral(String name) throws Exception {
-        Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_" + name);
-        if (cacheObj == null) { // 缓存为空
-            return null;
-        } else { // 已经存在缓存
-            return (ArrayList<Asset>) cacheObj;
+    public Map<String, List<Asset>> assetsGeneral(String name) throws Exception {
+        Object cacheObj;
+        Map<String, List<Asset>> map = new HashMap<String, List<Asset>>();
+        if ("ALL".equals(name) || "OTHER".equals(name)) {
+            cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_" + name);
+            if (cacheObj != null)
+                map.put(name, (ArrayList<Asset>) cacheObj);
+        } else {
+            String[] splits = name.split("-");
+            if (name.indexOf("-") <= 0 || splits.length != 2)
+                return null;
+
+            for (int s = (byte) splits[0].charAt(0); s <= (byte) splits[splits.length - 1].charAt(0); s++) {
+                cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_GENERAL + "_" + (char) s);
+                if (cacheObj != null)
+                    map.put(String.valueOf((char) s), (ArrayList<Asset>) cacheObj);
+            }
         }
+        return map;
     }
 
     @Override

@@ -185,7 +185,8 @@
 		<appender-ref ref="WARN" />
 		<appender-ref ref="INFO" />
 		<appender-ref ref="DEBUG" />
-		<!-- 生产环境将请stdout去掉 <appender-ref ref="STDOUT" /> -->
+		<!-- 生产环境将请stdout去掉 -->
+		<appender-ref ref="STDOUT" />
 	</root>
 
 	<!--日志异步到数据库 -->

@@ -1,6 +1,7 @@
 package com.chain.wp.coin.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chain.wp.coin.config.CoinConfigProperties;
 import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
-import com.chain.wp.coin.page.AssetGeneral;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
@@ -174,9 +174,9 @@ public class CurrencyApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/assetsGeneral", method = RequestMethod.GET)
-    public List<Asset> assetsGeneral(@RequestParam(value = "name", required = true) String name) throws Exception {
-        List<Asset> list = currencyApiService.assetsGeneral(name);
-        return list;
+    public Map<String, List<Asset>> assetsGeneral(@RequestParam(value = "name", required = true) String name) throws Exception {
+        Map<String, List<Asset>> map = currencyApiService.assetsGeneral(name);
+        return map;
     }
 
     @RequestMapping(value = "/tx", method = RequestMethod.GET)

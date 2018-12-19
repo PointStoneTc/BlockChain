@@ -8,9 +8,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     name: chainage
-    url: jdbc:mysql://localhost:3306/wp_coin?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: wp_coin
-    password: Fpm7adMbTXJste8A
+    url: jdbc:mysql://35.200.99.89:3306/Chainage_cc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: Chainage_cc
+    password: YiCz3jEw4A4jZ5e4
     driver-class-name: com.mysql.jdbc.Driver
     # 下面为连接池的补充设置，应用到上面所有数据源中
     initialSize: 1 # 初始化大小
@@ -37,7 +37,7 @@ spring:
     database: 0  # 数据库索引（默认为0）
     host: localhost
     port: 6379
-    password: #foobared # 服务器连接密码（默认为空）
+    password: foobared # 服务器连接密码（默认为空）
     lettuce:
       pool:
         max-idle: 25 # 连接池中的最大空闲连接

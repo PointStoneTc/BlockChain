@@ -121,7 +121,7 @@ coin:
     btcMonitorRate:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?
       symbol: BTC
-      convert: AUD,BRL,GBP,CAD,CLP,CNY,CZK,DKK,EUR,HKD,HUF,INR,IDR,ILS,JPY,MYR,MXN,TWD,NZD,NOK,PKR,PHP,PLN,RUB,SGD,ZAR,KRW,SEK,CHF,THB,TRY,USD
+      convert: AUD,EUR,CNY,KRW,JPY,USD
     #setAssetsGeneral_Job所用到的参数
     assetsGeneral_Job:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
