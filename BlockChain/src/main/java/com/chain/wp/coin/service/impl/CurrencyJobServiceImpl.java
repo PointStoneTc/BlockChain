@@ -1,6 +1,5 @@
 package com.chain.wp.coin.service.impl;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,11 +24,11 @@ import com.chain.wp.coin.entity.BtcMonitorOhlcvHistory;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
 import com.chain.wp.coin.entity.FloatExchange;
 import com.chain.wp.coin.entity.SpecificRate;
-import com.chain.wp.coin.page.AssetGeneral;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.MarkInofExchange;
+import com.chain.wp.coin.page.OneDayMarketCapInfo;
 import com.chain.wp.coin.service.BtcMonitorLineHistoryServiceI;
 import com.chain.wp.coin.service.BtcMonitorOhlcvHistoryServiceI;
 import com.chain.wp.coin.service.BtcMonitorRateHistoryServiceI;
@@ -435,6 +434,28 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
+    @Override
+    public boolean setOnedayCap_Job() throws Exception {
+        String url = coinConfigProperties.getOnedayHourCapJob().getUrl();
+        String convent = coinConfigProperties.getOnedayHourCapJob().getConvert();
+        JSONObject json = JSONObject.fromObject(setGetHasHeader(url + "?convert=" + convent)).getJSONObject("data");
+        OneDayMarketCapInfo oneDayMarketCapInfo = new OneDayMarketCapInfo();
+        oneDayMarketCapInfo.setBtc_dominance(json.getDouble("btc_dominance"));
+        oneDayMarketCapInfo.setEth_dominance(json.getDouble("eth_dominance"));
+        oneDayMarketCapInfo.setActive_cryptocurrencies(json.getDouble("active_cryptocurrencies"));
+        oneDayMarketCapInfo.setActive_market_pairs(json.getDouble("active_market_pairs"));
+        oneDayMarketCapInfo.setActive_exchanges(json.getDouble("active_exchanges"));
+        oneDayMarketCapInfo.setLast_updated(DateUtils.parseDate(json.getString("last_updated"), DateUtils.datetimeISO8601Format));
+
+        for (String key : convent.split(",")) {
+            JSONObject quote_item = json.getJSONObject("quote").getJSONObject(key);
+            oneDayMarketCapInfo.addQuote(key, quote_item.getDouble("total_market_cap"), quote_item.getDouble("total_volume_24h"));
+        }
+
+        redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ONE_DAY_CAP, oneDayMarketCapInfo);
+        return false;
+    }
+
     /*--------------------------------------------
     |             私有方法                        |
     ============================================*/
@@ -472,4 +493,5 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         String header = coinConfigProperties.getApiKeyName() + ";" + coinConfigProperties.getApiKeyValue();
         return httpUtil.sendGet(url, header);
     }
+
 }

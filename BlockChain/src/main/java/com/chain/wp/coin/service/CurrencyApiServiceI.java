@@ -10,6 +10,7 @@ import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.ExchangeRiseFall;
 import com.chain.wp.coin.page.MarkInofExchange;
+import com.chain.wp.coin.page.OneDayMarketCapInfo;
 
 public interface CurrencyApiServiceI {
     /**
@@ -110,4 +111,12 @@ public interface CurrencyApiServiceI {
      * @throws Exception
      */
     public MarkInofExchange marketInfoExchange(int base, int quot, int start) throws Exception;
+
+    /**
+     * 24小时所有市场交易总量信息
+     * 
+     * @return
+     * @throws Exception
+     */
+    public OneDayMarketCapInfo onedayCap() throws Exception;
 }

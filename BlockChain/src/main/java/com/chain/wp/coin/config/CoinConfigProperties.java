@@ -15,6 +15,7 @@ public class CoinConfigProperties {
     private BtcMonitorLineOHLCV btcMonitorLineOHLCV;
     private BtcMonitorRate btcMonitorRate;
     private AssetsGeneralJob assetsGeneralJob;
+    private OnedayHourCapJob onedayHourCapJob;
 
     public String getApiKeyName() {
         return apiKeyName;
@@ -94,6 +95,14 @@ public class CoinConfigProperties {
 
     public void setAssetsGeneralJob(AssetsGeneralJob assetsGeneralJob) {
         this.assetsGeneralJob = assetsGeneralJob;
+    }
+
+    public OnedayHourCapJob getOnedayHourCapJob() {
+        return onedayHourCapJob;
+    }
+
+    public void setOnedayHourCapJob(OnedayHourCapJob onedayHourCapJob) {
+        this.onedayHourCapJob = onedayHourCapJob;
     }
 
     /**
@@ -457,6 +466,27 @@ public class CoinConfigProperties {
 
         public void setSort_dir(String sort_dir) {
             this.sort_dir = sort_dir;
+        }
+    }
+    
+    public static class OnedayHourCapJob{
+        private String url;
+        private String convert;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getConvert() {
+            return convert;
+        }
+
+        public void setConvert(String convert) {
+            this.convert = convert;
         }
     }
 

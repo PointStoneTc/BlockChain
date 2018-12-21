@@ -118,14 +118,17 @@ coin:
         symbol: BTC
         convert: USD
     #setBtcMonitorRate所用到的参数
-    btcMonitorRate:
+    btc-monitor-rate:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?
       symbol: BTC
       convert: AUD,EUR,CNY,KRW,JPY,USD
     #setAssetsGeneral_Job所用到的参数
-    assetsGeneral_Job:
+    assets-general-job:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
       convert: JPY
       limit: 500
       sort: price
       sort_dir: asc
+    oneday-hour-cap-job:
+      url: https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest
+      convert: JPY,USD

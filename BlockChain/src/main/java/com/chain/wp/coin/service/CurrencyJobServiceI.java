@@ -80,4 +80,12 @@ public interface CurrencyJobServiceI {
      * @throws Exception
      */
     public boolean setBtcMonitorRate_Job() throws Exception;
+
+    /**
+     * 更新24小时市场交易概况(计划任务调用)
+     * 
+     * @return
+     * @throws Exception
+     */
+    public boolean setOnedayCap_Job() throws Exception;
 }

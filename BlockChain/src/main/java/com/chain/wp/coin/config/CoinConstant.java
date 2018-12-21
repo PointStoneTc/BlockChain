@@ -24,4 +24,6 @@ public abstract class CoinConstant {
     public final static String BTC_MONITOR_LINE_OHLCV = "btc_monitor_line_olhcv";
     /** BTC监视器 rate 信息 */
     public final static String BTC_MONITOR_RATE = "btc_monitor_rate";
+    /** 24小时虚拟货币市场交易总资产信息 */
+    public final static String ONE_DAY_CAP = "one_day_cap";
 }

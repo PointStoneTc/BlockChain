@@ -25,6 +25,7 @@ public class CoinAssetsQuotationRateCurrentJob implements BaseJob {
     public void run() {
         try {
             currencyJobService.setAssetsQuotationRateCurrent_Job();
+            currencyJobService.setOnedayCap_Job();
         } catch (IOException ioe) {
             logger.error("coinMarketCap API 请求异常!");
         } catch (Exception e) {

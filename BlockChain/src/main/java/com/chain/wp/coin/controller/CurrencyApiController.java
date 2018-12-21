@@ -22,6 +22,7 @@ import com.chain.wp.coin.page.BtcMonitor;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.ExchangeRiseFall;
 import com.chain.wp.coin.page.MarkInofExchange;
+import com.chain.wp.coin.page.OneDayMarketCapInfo;
 import com.chain.wp.coin.service.CurrencyApiServiceI;
 import com.chain.wp.coin.service.CurrencyJobServiceI;
 
@@ -179,6 +180,18 @@ public class CurrencyApiController {
         return map;
     }
 
+    /**
+     * 获取24小时所有市场交易总量信息
+     * 
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/onedayCap", method = RequestMethod.GET)
+    public OneDayMarketCapInfo onedayCap() throws Exception {
+        OneDayMarketCapInfo oneDayMarketCapInfo = currencyApiService.onedayCap();
+        return oneDayMarketCapInfo;
+    }
+
     @RequestMapping(value = "/tx", method = RequestMethod.GET)
     public boolean tx(@RequestParam(value = "base", required = true) int base, HttpServletResponse res) {
         try {
@@ -207,6 +220,10 @@ public class CurrencyApiController {
             case 6:
                 // 6.测试更新资产概要信息缓存
                 currencyJobService.setAssetsGeneral_Job();
+                break;
+            case 7:
+                // 7.测试24小时所有市场交易总量信息缓存
+                currencyJobService.setOnedayCap_Job();
                 break;
             default:
                 break;

@@ -28,6 +28,7 @@ import com.chain.wp.coin.page.ExchangeMarkInfoDetail;
 import com.chain.wp.coin.page.ExchangeRiseFall;
 import com.chain.wp.coin.page.MarkInofExchange;
 import com.chain.wp.coin.page.MarkInofExchangeDetail;
+import com.chain.wp.coin.page.OneDayMarketCapInfo;
 import com.chain.wp.coin.service.CurrencyApiServiceI;
 
 import net.sf.json.JSONArray;
@@ -285,9 +286,20 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return markInfo;
     }
 
+    @Override
+    public OneDayMarketCapInfo onedayCap() throws Exception {
+        Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ONE_DAY_CAP);
+        if (cacheObj != null)
+            return (OneDayMarketCapInfo) cacheObj;
+
+        return null;
+    }
+
     private String setGetHasHeader(String url) throws Exception {
         String header = coinConfigProperties.getApiKeyName() + ";" + coinConfigProperties.getApiKeyValue();
         return httpUtil.sendGet(url, header);
     }
+
+
 }
 
