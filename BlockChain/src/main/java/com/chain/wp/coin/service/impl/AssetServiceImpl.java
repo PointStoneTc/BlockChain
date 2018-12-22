@@ -12,32 +12,26 @@ public class AssetServiceImpl implements AssetServiceI {
     @Autowired
     private AssetMapper assetDao;
 
-    @Override
     public int deleteByPrimaryKey(Integer id) {
         return assetDao.deleteByPrimaryKey(id);
     }
 
-    @Override
     public int insert(Asset record) {
         return assetDao.insert(record);
     }
 
-    @Override
     public int insertSelective(Asset record) {
         return assetDao.insertSelective(record);
     }
 
-    @Override
     public Asset selectByPrimaryKey(Integer id) {
         return assetDao.selectByPrimaryKey(id);
     }
 
-    @Override
     public int updateByPrimaryKeySelective(Asset record) {
         return assetDao.updateByPrimaryKeySelective(record);
     }
 
-    @Override
     public int updateByPrimaryKey(Asset record) {
         return assetDao.updateByPrimaryKey(record);
     }

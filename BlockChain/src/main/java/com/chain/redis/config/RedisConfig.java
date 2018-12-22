@@ -25,7 +25,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.chain.redis.service.IRedisService;
+import com.chain.redis.service.RedisService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +51,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    MessageListenerAdapter listenerAdapter(IRedisService redisService) {
+    MessageListenerAdapter listenerAdapter(RedisService redisService) {
         return new MessageListenerAdapter(redisService, "receiveMessage");
     }
 

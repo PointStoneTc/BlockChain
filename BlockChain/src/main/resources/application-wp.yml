@@ -116,7 +116,7 @@ coin:
       ohlcv:
         url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/ohlcv/latest
         symbol: BTC
-        convert: USD
+        convert: JPY
     #setBtcMonitorRate所用到的参数
     btc-monitor-rate:
       url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?

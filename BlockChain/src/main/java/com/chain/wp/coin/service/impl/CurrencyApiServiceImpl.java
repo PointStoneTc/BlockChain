@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chain.redis.service.IRedisService;
+import com.chain.redis.service.RedisService;
 import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
 import com.chain.wp.coin.config.CoinConfigProperties;
@@ -41,27 +41,23 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     @Autowired
     private CoinConfigProperties coinConfigProperties;
     @Autowired
-    private IRedisService redisService;
+    private RedisService redisService;
     @Autowired
     private HttpUtil httpUtil;
 
-    @Override
     public boolean exchanges(String key) throws Exception {
         return false;
     }
 
-    @Override
     public boolean assets() throws Exception {
         return false;
     }
 
-    @Override
     public boolean symbols() throws Exception {
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<AssetQuotation> assetTrend() throws Exception {
         // 1.获取assets交易变化的信息
         List<AssetQuotation> currentData = (List<AssetQuotation>) redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSETS_QUOTATION_RATE);
@@ -76,7 +72,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return currentData;
     }
 
-    @Override
     public BtcMonitor btcMonitorLine_OHLCV() throws Exception {
         BtcMonitor btcMonitor;
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_LINE_OHLCV);
@@ -89,7 +84,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return btcMonitor;
     }
 
-    @Override
     public BtcMonitorRateHistory btcMonitorRate() throws Exception {
         BtcMonitorRateHistory rate;
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.BTC_MONITOR_RATE);
@@ -103,7 +97,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public Map<String, List<Asset>> assetsGeneral(String name) throws Exception {
         Object cacheObj;
         Map<String, List<Asset>> map = new HashMap<String, List<Asset>>();
@@ -125,27 +118,23 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return map;
     }
 
-    @Override
     public void topMarketTrend() throws Exception {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     public void legalcurrencyTrend() throws Exception {
         // TODO Auto-generated method stub
 
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<ExchangeRiseFall> topFloatingExchange() throws Exception {
         List<ExchangeRiseFall> list = (List<ExchangeRiseFall>) redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.LEGALCURRENCY_TREND);
         return list;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public ExchangeMarkInfo exchangeMarketInfo(int id) throws Exception {
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.EXCHANGE_MARK_INFO);
         boolean mustQuery = false;
@@ -204,7 +193,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public MarkInofExchange marketInfoExchange(int base, int quot, int start_1) throws Exception {
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE);
         boolean mustQuery = false;
@@ -286,7 +274,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return markInfo;
     }
 
-    @Override
     public OneDayMarketCapInfo onedayCap() throws Exception {
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ONE_DAY_CAP);
         if (cacheObj != null)
@@ -299,7 +286,6 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         String header = coinConfigProperties.getApiKeyName() + ";" + coinConfigProperties.getApiKeyValue();
         return httpUtil.sendGet(url, header);
     }
-
 
 }
 

@@ -16,11 +16,11 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import com.chain.redis.service.IRedisService;
+import com.chain.redis.service.RedisService;
 
 @Service("redisService")
 @SuppressWarnings("unchecked")
-public class RedisServiceImpl implements IRedisService {
+public class RedisServiceImpl implements RedisService {
     private final static Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
 
     @SuppressWarnings("rawtypes")
@@ -38,6 +38,7 @@ public class RedisServiceImpl implements IRedisService {
         }
         return result;
     }
+
 
     public boolean set(final String key, Object value, Long expireTime) {
         boolean result = false;
@@ -121,12 +122,10 @@ public class RedisServiceImpl implements IRedisService {
         return zset.rangeByScore(key, scoure, scoure1);
     }
 
-    @Override
     public void setMessage(Long funiqueid) {
         redisTemplate.convertAndSend("mc", funiqueid);
     }
 
-    @Override
     public void receiveMessage(String message) {
         logger.info("接收redis通道消息：" + message);
     }

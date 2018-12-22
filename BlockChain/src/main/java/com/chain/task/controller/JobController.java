@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chain.task.entity.JobAndTrigger;
-import com.chain.task.servcie.JobAndTriggerServiceI;
+import com.chain.task.servcie.JobAndTriggerService;
 
 @Controller
 @RequestMapping(value = "/job")
 public class JobController {
     private final static Logger logger = LoggerFactory.getLogger(JobController.class);
     @Autowired
-    private JobAndTriggerServiceI jobAndTriggerService;
+    private JobAndTriggerService jobAndTriggerService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String list(Model model) {

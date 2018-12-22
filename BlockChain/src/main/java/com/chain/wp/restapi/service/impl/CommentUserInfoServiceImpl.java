@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.chain.wp.restapi.dao.CommentUserInfoMapper;
 import com.chain.wp.restapi.entity.CommentUserInfo;
-import com.chain.wp.restapi.service.CommentUserInfoServiceI;
+import com.chain.wp.restapi.service.CommentUserInfoService;
 
 
 @Service("commentUserInfoService")
-public class CommentUserInfoServiceImpl implements CommentUserInfoServiceI {
+public class CommentUserInfoServiceImpl implements CommentUserInfoService {
     @Autowired
     private CommentUserInfoMapper commentUserInfoDao;
 

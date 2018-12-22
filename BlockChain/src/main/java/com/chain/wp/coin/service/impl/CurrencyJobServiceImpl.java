@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chain.base.service.MyBatisCommonServiceI;
-import com.chain.redis.service.IRedisService;
+import com.chain.redis.service.RedisService;
 import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
 import com.chain.wp.coin.config.CoinConfigProperties;
@@ -49,7 +49,7 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     @Autowired
     private CoinConfigProperties coinConfigProperties;
     @Autowired
-    private IRedisService redisService;
+    private RedisService redisService;
     @Autowired
     private HttpUtil httpUtil;
 
@@ -67,7 +67,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     private MyBatisCommonServiceI myBatisCommonService;
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean setAssetsQuotationRateCurrent_Job() throws Exception {
         String url = coinConfigProperties.getAssetsQuotationRateCurrent().getUrl();
         String id_base = coinConfigProperties.getAssetsQuotationRateCurrent().getId_base();
@@ -137,7 +136,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public boolean setAssetsQuotationRateHistory24h_Job() throws Exception {
         String id_base = coinConfigProperties.getAssetsQuotationRateCurrent().getId_base();
         String id_quote = coinConfigProperties.getAssetsQuotationRateCurrent().getId_quote();
@@ -161,7 +159,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public boolean setAssetsGeneral_Job() throws Exception {
         String url = coinConfigProperties.getAssetsGeneralJob().getUrl();
         int limit = coinConfigProperties.getAssetsGeneralJob().getLimit();
@@ -226,17 +223,14 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public void setTopMarketTrend_Job() throws Exception {
         // TODO 不做
     }
 
-    @Override
     public void setLegalcurrencyTrend_Job() throws Exception {
         // TODO 不做
     }
 
-    @Override
     public boolean setTopFloatingExchange_Job() throws Exception {
         // 1.查询最新的交易所浮动API数据
         String url = coinConfigProperties.getTopFloatingExchange().getUrl();
@@ -266,7 +260,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean setExchangeMarkInfo_Job() throws Exception {
         // 1.判断是否有缓存信息
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.EXCHANGE_MARK_INFO);
@@ -288,7 +281,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean setMarkInfoExchange_Job() throws Exception {
         // 1.判断是否有缓存信息
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE);
@@ -309,7 +301,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public boolean setBtcMonitorLine_OHLCV_Job() throws Exception {
         // 1.读取Line（汇率）API信息
         String line_url = coinConfigProperties.getBtcMonitorLineOHLCV().getLine().getUrl();
@@ -403,7 +394,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public boolean setBtcMonitorRate_Job() throws Exception {
         // 1.查询最新的BTC-法币的价格API数据
         String url = coinConfigProperties.getBtcMonitorRate().getUrl();
@@ -434,7 +424,6 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
         return true;
     }
 
-    @Override
     public boolean setOnedayCap_Job() throws Exception {
         String url = coinConfigProperties.getOnedayHourCapJob().getUrl();
         String convent = coinConfigProperties.getOnedayHourCapJob().getConvert();

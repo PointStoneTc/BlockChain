@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.chain.wp.restapi.entity.Post;
 
-public interface HomeServiceI {
+public interface HomeService {
     /**
      * @Title 首页内容封装
      * 
      * @return
      * @throws Exception
      */
-    public boolean home() throws Exception;
+    boolean home() throws Exception;
 
     /**
      * @Title 金融通文章内容封装
@@ -20,7 +20,7 @@ public interface HomeServiceI {
      * @return
      * @throws Exception
      */
-    public boolean financeDepart() throws Exception;
+    boolean financeDepart() throws Exception;
 
     /**
      * @Title 文章右侧热门文章封装
@@ -29,7 +29,7 @@ public interface HomeServiceI {
      * @return
      * @throws Exception
      */
-    public boolean rightPopular() throws Exception;
+    boolean rightPopular() throws Exception;
 
     /**
      * @Title 文章下方推荐文章封装
@@ -39,5 +39,5 @@ public interface HomeServiceI {
      * @return
      * @throws Exception
      */
-    public List<Post> ctRecommend(String cats, String postId) throws Exception;
+    List<Post> ctRecommend(String cats, String postId) throws Exception;
 }

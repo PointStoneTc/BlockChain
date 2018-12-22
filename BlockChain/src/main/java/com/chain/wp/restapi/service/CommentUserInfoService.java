@@ -2,7 +2,7 @@ package com.chain.wp.restapi.service;
 
 import com.chain.wp.restapi.entity.CommentUserInfo;
 
-public interface CommentUserInfoServiceI {
+public interface CommentUserInfoService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(CommentUserInfo record);

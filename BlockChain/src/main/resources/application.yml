@@ -76,7 +76,7 @@ pagehelper:
   support-methods-arguments: true
 
 #==================== mybatis存储 ===========================
-mybatis:
+mybatis-plus:
   mapper-locations: classpath:mapping/*Mapper.xml
   config-locations: classpath:mybatis-config.xml
   type-aliases-package: com.chain

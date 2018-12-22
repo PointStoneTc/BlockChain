@@ -14,37 +14,30 @@ public class BtcMonitorOhlcvHistoryServiceImpl implements BtcMonitorOhlcvHistory
     @Autowired
     private BtcMonitorOhlcvHistoryMapper btcMonitorOhlcvHistoryDao;
 
-    @Override
     public int deleteByPrimaryKey(String id) {
         return btcMonitorOhlcvHistoryDao.deleteByPrimaryKey(id);
     }
 
-    @Override
     public int insert(BtcMonitorOhlcvHistory record) {
         return btcMonitorOhlcvHistoryDao.insert(record);
     }
 
-    @Override
     public int insertSelective(BtcMonitorOhlcvHistory record) {
         return btcMonitorOhlcvHistoryDao.insertSelective(record);
     }
 
-    @Override
     public BtcMonitorOhlcvHistory selectByPrimaryKey(String id) {
         return btcMonitorOhlcvHistoryDao.selectByPrimaryKey(id);
     }
 
-    @Override
     public int updateByPrimaryKeySelective(BtcMonitorOhlcvHistory record) {
         return btcMonitorOhlcvHistoryDao.updateByPrimaryKeySelective(record);
     }
 
-    @Override
     public int updateByPrimaryKey(BtcMonitorOhlcvHistory record) {
         return btcMonitorOhlcvHistoryDao.updateByPrimaryKey(record);
     }
 
-    @Override
     public List<BtcMonitorOhlcvHistory> selectAll(Integer page, Integer size) {
         return btcMonitorOhlcvHistoryDao.selectAll(page, size);
     }
