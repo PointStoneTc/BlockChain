@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chain.redis.service.RedisService;
+import com.chain.redis.service.RedisServiceI;
 import com.chain.util.DateUtils;
 import com.chain.util.HttpUtil;
 import com.chain.wp.coin.config.CoinConfigProperties;
@@ -41,7 +41,7 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     @Autowired
     private CoinConfigProperties coinConfigProperties;
     @Autowired
-    private RedisService redisService;
+    private RedisServiceI redisService;
     @Autowired
     private HttpUtil httpUtil;
 

@@ -6,13 +6,13 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.chain.wp.restapi.service.HomeService;
+import com.chain.wp.restapi.service.HomeServiceI;
 
 @Component
 // @EnableScheduling
 public class ScheduledTasks {
     @Autowired
-    private HomeService homeService;
+    private HomeServiceI homeService;
 
     // @Scheduled(cron = "0 0/5 * * * ?")
     public void getWpHomeView() {

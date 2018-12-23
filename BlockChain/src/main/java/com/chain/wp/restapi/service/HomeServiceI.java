@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.chain.wp.restapi.entity.Post;
 
-public interface HomeService {
+public interface HomeServiceI {
     /**
      * @Title 首页内容封装
      * 

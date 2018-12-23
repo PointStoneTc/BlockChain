@@ -1,0 +1,8 @@
+2018-12-23 09:50:04.798 DEBUG --- [restartedMain] com.chain.BlockChainApplicationSelf
+				Line:53  - Running with Spring Boot v2.1.0.RC1, Spring v5.1.1.RELEASE
+2018-12-23 09:53:09.913 DEBUG --- [restartedMain] com.chain.SpringBootWebApplication
+				Line:53  - Running with Spring Boot v2.1.0.RC1, Spring v5.1.1.RELEASE
+2018-12-23 09:54:36.875 DEBUG --- [restartedMain] com.chain.SpringBootWebApplication
+				Line:53  - Running with Spring Boot v2.1.0.RC1, Spring v5.1.1.RELEASE
+2018-12-23 10:03:28.506 DEBUG --- [restartedMain] com.chain.BlockChainApplicationSelf
+				Line:53  - Running with Spring Boot v2.1.0.RC1, Spring v5.1.1.RELEASE

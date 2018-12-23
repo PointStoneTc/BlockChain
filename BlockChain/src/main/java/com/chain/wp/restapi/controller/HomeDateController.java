@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.chain.redis.service.RedisService;
+import com.chain.redis.service.RedisServiceI;
 import com.chain.wp.restapi.entity.CommentUserInfo;
 import com.chain.wp.restapi.entity.Post;
-import com.chain.wp.restapi.service.CommentUserInfoService;
-import com.chain.wp.restapi.service.HomeService;
+import com.chain.wp.restapi.service.CommentUserInfoServiceI;
+import com.chain.wp.restapi.service.HomeServiceI;
 import com.chain.wp.restapi.view.FinanceDepartView;
 import com.chain.wp.restapi.view.HomeView;
 import com.chain.wp.restapi.view.RightPopularView;
@@ -28,13 +28,13 @@ import com.chain.wp.restapi.view.RightPopularView;
 public class HomeDateController {
     private final static Logger logger = LoggerFactory.getLogger(HomeDateController.class);
     @Autowired
-    private RedisService redisService;
+    private RedisServiceI redisService;
 
     @Autowired
-    private HomeService homeService;
+    private HomeServiceI homeService;
 
     @Autowired
-    private CommentUserInfoService commentUserInfoService;
+    private CommentUserInfoServiceI commentUserInfoService;
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public HomeView home(HttpServletResponse res) {

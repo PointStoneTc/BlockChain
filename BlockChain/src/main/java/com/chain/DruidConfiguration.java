@@ -17,7 +17,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 @Configuration
 @ConditionalOnClass(com.alibaba.druid.pool.DruidDataSource.class)
-@ServletComponentScan("com.zkpt")
+@ServletComponentScan("com.chain")
 public class DruidConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
     private static final String DB_PREFIX = "spring.datasource";

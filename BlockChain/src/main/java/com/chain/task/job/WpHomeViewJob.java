@@ -6,13 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.chain.wp.restapi.service.HomeService;
+import com.chain.wp.restapi.service.HomeServiceI;
 
 public class WpHomeViewJob implements BaseJob {
     private final static Logger logger = LoggerFactory.getLogger(WpHomeViewJob.class);
 
     @Autowired
-    private HomeService homeService;
+    private HomeServiceI homeService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {

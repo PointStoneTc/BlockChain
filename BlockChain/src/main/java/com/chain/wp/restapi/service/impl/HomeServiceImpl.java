@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.chain.redis.service.RedisService;
+import com.chain.redis.service.RedisServiceI;
 import com.chain.util.HttpUtil;
 import com.chain.wp.restapi.config.CtRecommendViewConfigProperties;
 import com.chain.wp.restapi.config.FinanceDepartViewConfigProperties;
@@ -27,7 +27,7 @@ import com.chain.wp.restapi.entity.MediaDetail;
 import com.chain.wp.restapi.entity.Post;
 import com.chain.wp.restapi.entity.Tag;
 import com.chain.wp.restapi.entity.User;
-import com.chain.wp.restapi.service.HomeService;
+import com.chain.wp.restapi.service.HomeServiceI;
 import com.chain.wp.restapi.view.FinanceDepartView;
 import com.chain.wp.restapi.view.HomeView;
 import com.chain.wp.restapi.view.RightPopularView;
@@ -36,7 +36,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Service("homeService")
-public class HomeServiceImpl implements HomeService {
+public class HomeServiceImpl implements HomeServiceI {
     private final static Logger logger = LoggerFactory.getLogger(HomeServiceImpl.class);
     final static String COMMA = ",";
     final static String QUESTION = "?";
@@ -57,11 +57,12 @@ public class HomeServiceImpl implements HomeService {
     private CtRecommendViewConfigProperties ctRecommendViewConfigProperties;
 
     @Autowired
-    private RedisService redisService;
+    private RedisServiceI redisService;
 
     @Autowired
     private HttpUtil httpUtil;
 
+    @Override
     public boolean home() throws Exception {
         HomeView homeView = new HomeView();
 
@@ -409,6 +410,7 @@ public class HomeServiceImpl implements HomeService {
         return null;
     }
 
+    @Override
     public boolean financeDepart() throws Exception {
         int postId = financeDepartViewConfigProperties.getId();
         FinanceDepartView financeDepartView = new FinanceDepartView();
@@ -432,6 +434,7 @@ public class HomeServiceImpl implements HomeService {
         return true;
     }
 
+    @Override
     public boolean rightPopular() throws Exception {
         int postId = rightPopularViewConfigProperties.getId();
         RightPopularView rightPopularView = new RightPopularView();
@@ -482,6 +485,7 @@ public class HomeServiceImpl implements HomeService {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public List<Post> ctRecommend(String cats, String postId) throws Exception {
         Object catchList = redisService.get("chain_ctRecommendView:" + cats);
         if (catchList != null)

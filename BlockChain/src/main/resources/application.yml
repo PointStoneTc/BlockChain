@@ -1,6 +1,12 @@
 #==================== 日志配合·标准  ============================
 logging:
   config: classpath:logback-boot.xml
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
 
 #==================== Spring配置 =================================
 spring:
@@ -76,7 +82,7 @@ pagehelper:
   support-methods-arguments: true
 
 #==================== mybatis存储 ===========================
-mybatis-plus:
+mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   config-locations: classpath:mybatis-config.xml
   type-aliases-package: com.chain
