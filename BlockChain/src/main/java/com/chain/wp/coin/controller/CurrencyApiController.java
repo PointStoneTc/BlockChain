@@ -32,7 +32,7 @@ import com.chain.wp.coin.service.CurrencyJobServiceI;
  * @Title: Controller
  * @Description: 数字加密货币提供服务
  * @author 赵琦
- * @date 2018-09-03 18:00:00
+ * @date 2018-12-24 18:00:00
  * @version V1.0
  *
  */
