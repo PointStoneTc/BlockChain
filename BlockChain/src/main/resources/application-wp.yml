@@ -129,6 +129,21 @@ coin:
       limit: 500
       sort: price
       sort_dir: asc
+    #setExchangesGeneral_Job所用到的参数
+    exchanges-general-job:
+      url: https://pro-api.coinmarketcap.com/v1/exchange/listings/latest
+      start: 1
+      convert: JPY
+      limit: 500
+      sort: volume_24h
+      sort_dir: desc
+      market_type: all
+    #setOnedayCap_Job所用到的参数
     oneday-hour-cap-job:
       url: https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest
       convert: JPY,USD
+    #assetInfoExchange所用到的参数
+    asset-info-exchange:
+      url: https://pro-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest
+      convert: JPY
+      limit: 1000

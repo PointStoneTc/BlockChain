@@ -25,6 +25,8 @@ public class CoinAssetsGeneralJob implements BaseJob {
     public void run() {
         try {
             currencyJobService.setAssetsGeneral_Job();
+            currencyJobService.setExchangesGeneral_Job();
+            currencyJobService.setOnedayCap_Job();
         } catch (IOException ioe) {
             logger.error("coinMarketCap API 请求异常!");
         } catch (Exception e) {

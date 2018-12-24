@@ -5,8 +5,10 @@ import java.util.Map;
 
 import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
+import com.chain.wp.coin.page.AssetInfoExchange;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
+import com.chain.wp.coin.page.ExchangeGeneral;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.ExchangeRiseFall;
 import com.chain.wp.coin.page.MarkInofExchange;
@@ -93,6 +95,15 @@ public interface CurrencyApiServiceI {
     Map<String, List<Asset>> assetsGeneral(String name) throws Exception;
 
     /**
+     * 交易所摘要概要信息
+     * 
+     * @param name
+     * @return
+     * @throws Exception
+     */
+    Map<String, List<ExchangeGeneral>> exchangeGeneral(String name) throws Exception;
+
+    /**
      * 以交易所为单位所有的市场信息
      * 
      * @param id 交易所id
@@ -105,12 +116,21 @@ public interface CurrencyApiServiceI {
      * 以市场为单位所有的交易所信息
      * 
      * @param base
-     * @param quot
+     * @param quote
      * @param start
      * @return
      * @throws Exception
      */
-    MarkInofExchange marketInfoExchange(int base, int quot, int start) throws Exception;
+    MarkInofExchange marketInfoExchange(int base, int quote, int start) throws Exception;
+
+    /**
+     * 提供指定货币交易的交易所信息
+     * 
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    AssetInfoExchange assetInfoExchange(int id) throws Exception;
 
     /**
      * 24小时所有市场交易总量信息

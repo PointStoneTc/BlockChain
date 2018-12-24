@@ -21,8 +21,10 @@ import com.chain.wp.coin.config.CoinConstant;
 import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
 import com.chain.wp.coin.entity.Exchange;
+import com.chain.wp.coin.page.AssetInfoExchange;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
+import com.chain.wp.coin.page.ExchangeGeneral;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.ExchangeMarkInfoDetail;
 import com.chain.wp.coin.page.ExchangeRiseFall;
@@ -118,6 +120,29 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
         return map;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, List<ExchangeGeneral>> exchangeGeneral(String name) throws Exception {
+        Object cacheObj;
+        Map<String, List<ExchangeGeneral>> map = new HashMap<String, List<ExchangeGeneral>>();
+        if ("ALL".equals(name) || "OTHER".equals(name)) {
+            cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.EXCHNAGES_GENERAL + "_" + name);
+            if (cacheObj != null)
+                map.put(name, (ArrayList<ExchangeGeneral>) cacheObj);
+        } else {
+            String[] splits = name.split("-");
+            if (name.indexOf("-") <= 0 || splits.length != 2)
+                return null;
+
+            for (int s = (byte) splits[0].charAt(0); s <= (byte) splits[splits.length - 1].charAt(0); s++) {
+                cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.EXCHNAGES_GENERAL + "_" + (char) s);
+                if (cacheObj != null)
+                    map.put(String.valueOf((char) s), (ArrayList<ExchangeGeneral>) cacheObj);
+            }
+        }
+        return map;
+    }
+
     public void topMarketTrend() throws Exception {
         // TODO Auto-generated method stub
 
@@ -193,7 +218,7 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    public MarkInofExchange marketInfoExchange(int base, int quot, int start_1) throws Exception {
+    public MarkInofExchange marketInfoExchange(int base, int quote, int start_1) throws Exception {
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE);
         boolean mustQuery = false;
         Map<String, MarkInofExchange> markInofExchangeMap = null;
@@ -208,7 +233,7 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
                 int baseId = Integer.parseInt(temp[0]);
                 int quoteId = Integer.parseInt(temp[1]);
                 int page = Integer.parseInt(starts[1]);
-                if (baseId == base && quoteId == quot && page == start_1)
+                if (baseId == base && quoteId == quote && page == start_1)
                     return markInofExchangeMap.get(key);
             }
             mustQuery = true;
@@ -237,7 +262,7 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
                 markInfo.setMarket_pairs(json.getJSONObject(i).getString("market_pair"));
                 int baseId = json.getJSONObject(i).getJSONObject("market_pair_base").getInt("currency_id");
                 int quoteId = json.getJSONObject(i).getJSONObject("market_pair_quote").getInt("currency_id");
-                if (base == baseId && quot == quoteId) {
+                if (base == baseId && quote == quoteId) {
                     MarkInofExchangeDetail detail = new MarkInofExchangeDetail();
                     Exchange exchange = new Exchange();
                     exchange.setExchangeid(json.getJSONObject(i).getJSONObject("exchange").getInt("id"));
@@ -268,10 +293,48 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
             if (markInfo.getExchangeList().size() > 0)
                 break;
         }
-        markInofExchangeMap.put(base + "_" + quot + ";" + start + "/" + DateUtils.getMillis(new Date()), markInfo);
+        markInofExchangeMap.put(base + "_" + quote + ";" + start + "/" + DateUtils.getMillis(new Date()), markInfo);
         redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE, markInofExchangeMap);
-        System.out.println("没有从缓存里面读取");
         return markInfo;
+    }
+
+    public AssetInfoExchange assetInfoExchange(int id) throws Exception {
+        Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSET_INFO_EXCHANGE + "_" + id);
+        if (cacheObj != null)
+            return (AssetInfoExchange) cacheObj;
+
+        AssetInfoExchange assetInfoExchange = new AssetInfoExchange();
+        Map<Integer, String> map = new HashMap<Integer, String>();
+        String url = coinConfigProperties.getAssetInfoExchange().getUrl();
+        String convert = coinConfigProperties.getAssetInfoExchange().getConvert();
+        int limit = coinConfigProperties.getAssetInfoExchange().getLimit();
+        int start = 1;
+        while (true) {
+            System.out.println("assetInfoExchange start ======= : " + start);
+            JSONArray json = JSONObject.fromObject(setGetHasHeader(url + "?start=" + start + "&limit=" + limit + "&convert=" + convert + "&id=" + id)).getJSONObject("data")
+                    .getJSONArray("market_pairs");
+            if (json.size() == 0)
+                break;
+
+            for (int i = 0; i < json.size(); i++) {
+                JSONObject item = json.getJSONObject(i);
+                ExchangeGeneral exchangeGeneral = new ExchangeGeneral();
+                exchangeGeneral.setEid(item.getJSONObject("exchange").getInt("id"));
+                exchangeGeneral.setSlug(item.getJSONObject("exchange").getString("slug"));
+                exchangeGeneral.setName(item.getJSONObject("exchange").getString("name"));
+                if (!map.containsKey(Integer.valueOf(exchangeGeneral.getEid()))) {
+                    map.put(Integer.valueOf(exchangeGeneral.getEid()), exchangeGeneral.getName());
+                    assetInfoExchange.getList().add(exchangeGeneral);
+                }
+            }
+
+            start += limit;
+        }
+
+        if (assetInfoExchange.getList().size() > 0)
+            redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.ASSET_INFO_EXCHANGE + "_" + id, assetInfoExchange, 60 * 60 * 24l);
+        return assetInfoExchange;
+
     }
 
     public OneDayMarketCapInfo onedayCap() throws Exception {

@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chain.wp.coin.config.CoinConfigProperties;
 import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
+import com.chain.wp.coin.page.AssetInfoExchange;
 import com.chain.wp.coin.page.AssetQuotation;
 import com.chain.wp.coin.page.BtcMonitor;
+import com.chain.wp.coin.page.ExchangeGeneral;
 import com.chain.wp.coin.page.ExchangeMarkInfo;
 import com.chain.wp.coin.page.ExchangeRiseFall;
 import com.chain.wp.coin.page.MarkInofExchange;
@@ -156,16 +158,35 @@ public class CurrencyApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/marketInfoExchange", method = RequestMethod.GET)
-    public MarkInofExchange marketInfoExchange(@RequestParam(value = "base", required = true) int base, @RequestParam(value = "quot", required = true) int quot,
+    public MarkInofExchange marketInfoExchange(@RequestParam(value = "base", required = true) int base, @RequestParam(value = "quote", required = true) int quote,
             @RequestParam(value = "page", required = true) int page) {
         MarkInofExchange markInfoExchange = null;
         try {
-            markInfoExchange = currencyApiService.marketInfoExchange(base, quot, page);
+            markInfoExchange = currencyApiService.marketInfoExchange(base, quote, page);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return markInfoExchange;
+    }
+
+    /**
+     * 提供指定货币交易的交易所信息
+     * 
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/assetInfoExchange", method = RequestMethod.GET)
+    public AssetInfoExchange assetInfoExchange(@RequestParam(value = "id", required = true) int id) {
+        AssetInfoExchange assetInfoExchange = null;
+        try {
+            assetInfoExchange = currencyApiService.assetInfoExchange(id);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return assetInfoExchange;
+
     }
 
     /**
@@ -177,6 +198,15 @@ public class CurrencyApiController {
     @RequestMapping(value = "/assetsGeneral", method = RequestMethod.GET)
     public Map<String, List<Asset>> assetsGeneral(@RequestParam(value = "name", required = true) String name) throws Exception {
         Map<String, List<Asset>> map = currencyApiService.assetsGeneral(name);
+        return map;
+    }
+
+    /**
+     * 
+     */
+    @RequestMapping(value = "/exchangesGeneral", method = RequestMethod.GET)
+    public Map<String, List<ExchangeGeneral>> exchangesGeneral(@RequestParam(value = "name", required = true) String name) throws Exception {
+        Map<String, List<ExchangeGeneral>> map = currencyApiService.exchangeGeneral(name);
         return map;
     }
 
@@ -224,6 +254,10 @@ public class CurrencyApiController {
             case 7:
                 // 7.测试24小时所有市场交易总量信息缓存
                 currencyJobService.setOnedayCap_Job();
+                break;
+            case 8:
+                // 7.测试更新交易所概要信息缓存
+                currencyJobService.setExchangesGeneral_Job();
                 break;
             default:
                 break;

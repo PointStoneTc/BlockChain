@@ -15,7 +15,9 @@ public class CoinConfigProperties {
     private BtcMonitorLineOHLCV btcMonitorLineOHLCV;
     private BtcMonitorRate btcMonitorRate;
     private AssetsGeneralJob assetsGeneralJob;
+    private ExchangesGeneralJob exchangesGeneralJob;
     private OnedayHourCapJob onedayHourCapJob;
+    private AssetInfoExchange assetInfoExchange;
 
     public String getApiKeyName() {
         return apiKeyName;
@@ -97,12 +99,28 @@ public class CoinConfigProperties {
         this.assetsGeneralJob = assetsGeneralJob;
     }
 
+    public ExchangesGeneralJob getExchangesGeneralJob() {
+        return exchangesGeneralJob;
+    }
+
+    public void setExchangesGeneralJob(ExchangesGeneralJob exchangesGeneralJob) {
+        this.exchangesGeneralJob = exchangesGeneralJob;
+    }
+
     public OnedayHourCapJob getOnedayHourCapJob() {
         return onedayHourCapJob;
     }
 
     public void setOnedayHourCapJob(OnedayHourCapJob onedayHourCapJob) {
         this.onedayHourCapJob = onedayHourCapJob;
+    }
+
+    public AssetInfoExchange getAssetInfoExchange() {
+        return assetInfoExchange;
+    }
+
+    public void setAssetInfoExchange(AssetInfoExchange assetInfoExchange) {
+        this.assetInfoExchange = assetInfoExchange;
     }
 
     /**
@@ -468,8 +486,76 @@ public class CoinConfigProperties {
             this.sort_dir = sort_dir;
         }
     }
-    
-    public static class OnedayHourCapJob{
+
+    public static class ExchangesGeneralJob {
+        private String url;
+        private int start;
+        private int limit;
+        private String sort;
+        private String sort_dir;
+        private String market_type;
+        private String convert;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public void setStart(int start) {
+            this.start = start;
+        }
+
+        public int getLimit() {
+            return limit;
+        }
+
+        public void setLimit(int limit) {
+            this.limit = limit;
+        }
+
+        public String getSort() {
+            return sort;
+        }
+
+        public void setSort(String sort) {
+            this.sort = sort;
+        }
+
+        public String getSort_dir() {
+            return sort_dir;
+        }
+
+        public void setSort_dir(String sort_dir) {
+            this.sort_dir = sort_dir;
+        }
+
+        public String getMarket_type() {
+            return market_type;
+        }
+
+        public void setMarket_type(String market_type) {
+            this.market_type = market_type;
+        }
+
+        public String getConvert() {
+            return convert;
+        }
+
+        public void setConvert(String convert) {
+            this.convert = convert;
+        }
+
+
+    }
+
+    public static class OnedayHourCapJob {
         private String url;
         private String convert;
 
@@ -488,6 +574,37 @@ public class CoinConfigProperties {
         public void setConvert(String convert) {
             this.convert = convert;
         }
+    }
+
+    public static class AssetInfoExchange {
+        private String url;
+        private String convert;
+        private int limit;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getConvert() {
+            return convert;
+        }
+
+        public void setConvert(String convert) {
+            this.convert = convert;
+        }
+
+        public int getLimit() {
+            return limit;
+        }
+
+        public void setLimit(int limit) {
+            this.limit = limit;
+        }
+
     }
 
 }

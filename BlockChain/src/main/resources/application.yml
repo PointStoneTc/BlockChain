@@ -1,6 +1,7 @@
 #==================== 日志配合·标准  ============================
 logging:
   config: classpath:logback-boot.xml
+
 management:
   endpoints:
     enabled-by-default: true

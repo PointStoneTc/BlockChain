@@ -9,9 +9,6 @@ import java.math.BigDecimal;
  *
  */
 public class AssetGeneral implements java.io.Serializable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5725448793896943806L;
     private String symbol;
     private String name;

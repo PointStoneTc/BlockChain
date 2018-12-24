@@ -24,6 +24,13 @@ public interface CurrencyJobServiceI {
      * @throws Exception
      */
     boolean setAssetsGeneral_Job() throws Exception;
+    
+    /**
+     * 更新交易所概要信息缓存(计划任务调用)
+     * @return
+     * @throws Exception
+     */
+    boolean setExchangesGeneral_Job() throws Exception;
 
     /**
      * 更新24小时交易总量超过200BTC的交易市场信息缓存(计划任务调用)
