@@ -532,8 +532,11 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
                 exchange.setNumMarketPairs(item.getInt("num_market_pairs"));
                 exchange.setLastUpdated(DateUtils.parseDate(item.getString("last_updated"), DateUtils.datetimeISO8601Format));
                 JSONObject quote = item.getJSONObject("quote");
+                if ("-1".equals(quote.getJSONObject(converts[0]).getString("volume_24h")))
+                    continue;
                 exchange.setbVolume24h(quote.getJSONObject(converts[0]).getDouble("volume_24h"));
                 exchange.setqVolume24h(quote.getJSONObject(converts[1]).getDouble("volume_24h"));
+                exchange.setPercent_change_volume_24h(quote.getJSONObject(converts[1]).getString("percent_change_volume_24h"));
                 exchange.setCreateDate(new Date());
                 floatExchangeList.add(exchange);
                 count++;

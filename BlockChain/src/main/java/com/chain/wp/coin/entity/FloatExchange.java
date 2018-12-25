@@ -331,4 +331,16 @@ public class FloatExchange implements Serializable {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    /************ 附加参数 **************/
+    private String percent_change_volume_24h;
+
+    public String getPercent_change_volume_24h() {
+        return percent_change_volume_24h;
+    }
+
+    public void setPercent_change_volume_24h(String percent_change_volume_24h) {
+        this.percent_change_volume_24h = percent_change_volume_24h;
+    }
+
 }
