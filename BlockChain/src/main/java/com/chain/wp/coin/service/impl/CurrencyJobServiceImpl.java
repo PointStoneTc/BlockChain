@@ -354,12 +354,17 @@ public class CurrencyJobServiceImpl implements CurrencyJobServiceI {
 
         Map<String, MarkInofExchange> exchangeMarkInfos = (Map<String, MarkInofExchange>) cacheObj;
         // 2.判断缓存的时效性是否大于1分钟（超过1分钟失效）
+        List<String> delKeys = new ArrayList<String>();
         for (String key : exchangeMarkInfos.keySet()) {
-            String updateTime = key.split(";")[1];
+            String updateTime = key.split(";")[1].split("/")[1];
             int difSeconds = DateUtils.dateDiff('s', DateUtils.getCalendar(), DateUtils.getCalendar(Long.parseLong(updateTime)));
             if (difSeconds >= 60)
-                exchangeMarkInfos.remove(key);
+                delKeys.add(key);
+
         }
+
+        for (String key : delKeys)
+            exchangeMarkInfos.remove(key);
 
         redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE, exchangeMarkInfos);
         return true;

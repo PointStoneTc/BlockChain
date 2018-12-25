@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chain.redis.service.RedisServiceI;
 import com.chain.wp.coin.config.CoinConfigProperties;
 import com.chain.wp.coin.entity.Asset;
 import com.chain.wp.coin.entity.BtcMonitorRateHistory;
@@ -54,6 +55,9 @@ public class CurrencyApiController {
 
     @Autowired
     private CurrencyJobServiceI currencyJobService;
+
+    @Autowired
+    private RedisServiceI redisService;
 
     @Autowired
     private CoinConfigProperties coinConfigProperties;
@@ -223,7 +227,7 @@ public class CurrencyApiController {
     }
 
     @RequestMapping(value = "/tx", method = RequestMethod.GET)
-    public boolean tx(@RequestParam(value = "base", required = true) int base, HttpServletResponse res) {
+    public boolean tx(@RequestParam(value = "base", required = true) int base, String value, HttpServletResponse res) {
         try {
             switch (base) {
             case 1:
@@ -256,8 +260,12 @@ public class CurrencyApiController {
                 currencyJobService.setOnedayCap_Job();
                 break;
             case 8:
-                // 7.测试更新交易所概要信息缓存
+                // 8.测试更新交易所概要信息缓存
                 currencyJobService.setExchangesGeneral_Job();
+                break;
+            case 9:
+                // 9.删除指定的缓存
+                redisService.remove(value);
                 break;
             default:
                 break;

@@ -191,9 +191,4 @@ public class MarkInofExchangeDetail implements java.io.Serializable {
     public void setConvertlastUpdate(Date convertlastUpdate) {
         this.convertlastUpdate = convertlastUpdate;
     }
-
-    public String getPriceDouble() {
-        return quotePirce.toPlainString();
-    }
-
 }
