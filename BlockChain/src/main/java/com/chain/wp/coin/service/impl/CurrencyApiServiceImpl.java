@@ -218,46 +218,36 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
     }
 
     @SuppressWarnings("unchecked")
-    public MarkInofExchange marketInfoExchange(int base, int quote, int start_1) throws Exception {
+    public MarkInofExchange marketInfoExchange(int base, int quote, int start) throws Exception {
         Object cacheObj = redisService.get(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE);
-        boolean mustQuery = false;
-        Map<String, MarkInofExchange> markInofExchangeMap = null;
-        if (cacheObj == null) { // redis中没有任何缓存数据
-            markInofExchangeMap = new HashMap<String, MarkInofExchange>();
-            mustQuery = true;
-        } else { // 查找缓存中是否包含此base_quot的缓存，如果包含直接返回缓存里的数据
+        Map<String, MarkInofExchange> markInofExchangeMap = new HashMap<String, MarkInofExchange>();
+        // key的组合方式为 baseId_quoteId;start/timelong
+        if (cacheObj != null) { // 查找缓存中是否包含此base_quot的缓存，如果包含直接返回缓存里的数据
             markInofExchangeMap = (Map<String, MarkInofExchange>) cacheObj;
             for (String key : markInofExchangeMap.keySet()) {
-                String[] temp = key.split(";")[0].split("/")[0].split("_");
-                String[] starts = key.split("/")[0].split(";");
+                String[] splits = key.split(";");
+                String[] temp = splits[0].split("_");
                 int baseId = Integer.parseInt(temp[0]);
                 int quoteId = Integer.parseInt(temp[1]);
-                int page = Integer.parseInt(starts[1]);
-                if (baseId == base && quoteId == quote && page == start_1)
+                int start_ed = Integer.parseInt(splits[1].split("/")[0]);
+                if (baseId == base && quoteId == quote && start_ed == start)
                     return markInofExchangeMap.get(key);
             }
-            mustQuery = true;
         }
 
         MarkInofExchange markInfo = new MarkInofExchange();
-        int loopNum = 0; // 循环的次数
-        int needLoopNum = 1; // 需要循环的次数
-        int start = 0; // 放入缓存的下标
-        int returnCount = 0; // 返回下标
         String url = coinConfigProperties.getMarketInfoExchange().getUrl();
         String convert = coinConfigProperties.getMarketInfoExchange().getConvert();
         int limit = coinConfigProperties.getMarketInfoExchange().getLimit();
-        while (mustQuery) {
-            System.out.println("loopNum:" + loopNum);
-            JSONObject object = JSONObject.fromObject(setGetHasHeader(url + "?id=" + base + "&convert=" + convert + "&limit=" + limit + "&start=" + start_1)).getJSONObject("data");
-            needLoopNum = (int) Math.ceil((object.getInt("num_market_pairs") / limit));
-            JSONArray json = object.getJSONArray("market_pairs");
+        int oldstart = start;
+        while (true) {
+            JSONObject object = JSONObject.fromObject(setGetHasHeader(url + "?id=" + base + "&convert=" + convert + "&limit=" + limit + "&start=" + start)).getJSONObject("data");
             markInfo.setId(object.getInt("id"));
             markInfo.setName(object.getString("name"));
             markInfo.setSymbol(object.getString("symbol"));
             markInfo.setNum_market_pairs(object.getInt("num_market_pairs"));
-            if (start_1 > markInfo.getNum_market_pairs())
-                break;
+
+            JSONArray json = object.getJSONArray("market_pairs");
             for (int i = 0; i < json.size(); i++) {
                 markInfo.setMarket_pairs(json.getJSONObject(i).getString("market_pair"));
                 int baseId = json.getJSONObject(i).getJSONObject("market_pair_base").getInt("currency_id");
@@ -284,17 +274,17 @@ public class CurrencyApiServiceImpl implements CurrencyApiServiceI {
                     detail.setExchange(exchange);
                     markInfo.getExchangeList().add(detail);
                 }
-                returnCount = i;
             }
-            start = start_1;
-            start_1 = start_1 + returnCount;
-            markInfo.setStart(start_1);
-            loopNum++;
-            if (markInfo.getExchangeList().size() > 0)
+            start += limit;
+            if (markInfo.getExchangeList().size() > 0 || ((start - oldstart) / limit) > 1) // 已经有数数据了,不必循环
                 break;
         }
-        markInofExchangeMap.put(base + "_" + quote + ";" + start + "/" + DateUtils.getMillis(new Date()), markInfo);
-        redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE, markInofExchangeMap);
+
+        markInfo.setStart(start);
+        if (markInfo.getExchangeList().size() > 0) {
+            markInofExchangeMap.put(base + "_" + quote + ";" + oldstart + "/" + DateUtils.getMillis(new Date()), markInfo);
+            redisService.set(CoinConstant.CURRENCY_API + "_" + CoinConstant.MARK_INFO_EXCHANGE, markInofExchangeMap);
+        }
         return markInfo;
     }
 

@@ -163,10 +163,10 @@ public class CurrencyApiController {
      */
     @RequestMapping(value = "/marketInfoExchange", method = RequestMethod.GET)
     public MarkInofExchange marketInfoExchange(@RequestParam(value = "base", required = true) int base, @RequestParam(value = "quote", required = true) int quote,
-            @RequestParam(value = "page", required = true) int page) {
+            @RequestParam(value = "start", required = true) int start) {
         MarkInofExchange markInfoExchange = null;
         try {
-            markInfoExchange = currencyApiService.marketInfoExchange(base, quote, page);
+            markInfoExchange = currencyApiService.marketInfoExchange(base, quote, start);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
