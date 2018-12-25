@@ -73,4 +73,18 @@ public class HomeDateController {
         commentUserInfoService.insert(user);
         return true;
     }
+
+    @RequestMapping(value = "/post/query", method = RequestMethod.GET)
+    public String query(@RequestParam(value = "key", required = true) String key, @RequestParam(value = "page", required = true) int page,
+            @RequestParam(value = "num", required = true) int num) {
+        String res = "";
+        try {
+            res = homeService.postQueryByKey(key, page, num);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
 }

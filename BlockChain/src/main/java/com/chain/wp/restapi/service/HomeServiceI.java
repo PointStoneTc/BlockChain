@@ -40,4 +40,15 @@ public interface HomeServiceI {
      * @throws Exception
      */
     List<Post> ctRecommend(String cats, String postId) throws Exception;
+
+    /**
+     * @Title 查询文章关键字
+     * 
+     * @param key
+     * @param page
+     * @param num
+     * @return
+     * @throws Exception
+     */
+    String postQueryByKey(String key, int page, int num) throws Exception;
 }

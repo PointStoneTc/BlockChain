@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.chain.base.service.MyBatisCommonServiceI;
 import com.chain.redis.service.RedisServiceI;
 import com.chain.util.HttpUtil;
 import com.chain.wp.restapi.config.CtRecommendViewConfigProperties;
@@ -58,6 +59,9 @@ public class HomeServiceImpl implements HomeServiceI {
 
     @Autowired
     private RedisServiceI redisService;
+
+    @Autowired
+    private MyBatisCommonServiceI myBatisCommonService;
 
     @Autowired
     private HttpUtil httpUtil;
@@ -545,6 +549,22 @@ public class HomeServiceImpl implements HomeServiceI {
 
         redisService.set("chain_ctRecommendView:" + cats, list, ctRecommendViewConfigProperties.getExpireTime());
         return list;
+    }
+
+    @Override
+    public String postQueryByKey(String key, int page, int num) throws Exception {
+        String sql = "from wp_posts w where w.post_status = 'publish' AND w.post_title LIKE '%" + key + "%' ORDER BY w.post_date DESC";
+        long count = myBatisCommonService.getCount("select count(1) ct " + sql);
+        if (count == 0)
+            return "{\"total\" : 0}";
+
+        List<LinkedHashMap<String, Object>> list = myBatisCommonService.superManagerSelect("select id " + sql + " limit " + (page - 1) * num + ", " + num);
+        StringBuffer sb = new StringBuffer("{\"total\" : " +count + ", \"ids\" : \"");
+        for (int i = 0; i < list.size(); i++)
+            sb.append(list.get(i).get("id")).append(",");
+        cutStringBuffer(sb, ",");
+        sb.append("\"}");
+        return sb.toString();
     }
 
     /**
